@@ -1,0 +1,25 @@
+{
+  "name": "temporario",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "2": "concurrently \"npm run start-dev-back\" \"npm run start-dev-front\"",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"npm run start-dev-back\" \"npm run start-dev-front\"",
+    "dev": "nodemon server.js",
+    "start-dev-back": "nodemon server.js",
+    "start-dev-front": "cd ../../front-end && npm run dev"
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
