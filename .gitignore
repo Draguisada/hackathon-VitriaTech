@@ -1,3 +1,15 @@
-**/.env
+
 **/node_modules
-**/venv
+
+**/lib64
+**/lib
+
+
+**/.venv/
+
+
+back-end/.env
+
+back-end/.env
+back-end/.env
+back-end/.env

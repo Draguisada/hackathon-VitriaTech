@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from "axios";
-import Remedio from './Remedio';
+import Remedio from '../props/SobraRemedio';
 
 export default function ListarItens() {
 
@@ -28,7 +28,7 @@ export default function ListarItens() {
     }, []);
 
     async function adicionarRemedio(nome, validade) {
-        axios.post('http://localhost:5000/', { nome, validade })
+        axios.post('http://localhost:5000/sobrando/', { nome, validade, sobrando })
     }
 
     function handleClick() {
@@ -37,13 +37,15 @@ export default function ListarItens() {
     }
 
     const [nomeRemedio, mudarNome] = useState('')
+    const [sobrando, mudarSobrando] = useState('')
     
 
     return (
         <div>
             <input type="text" placeholder="Nome remedio" onChange={(e) => mudarNome(e.target.value)} />
+            <input type="number" placeholder="Quantidade sobrando" onChange={(e) => mudarSobrando(e.target.value)} />
 
-            <button onClick={handleClick}>Clique aqui para criar remedio</button>
+            <button onClick={handleClick}>Clique aqui para criar remedio sobrando</button>
             { remedio &&
             remedio.map(user => (
             

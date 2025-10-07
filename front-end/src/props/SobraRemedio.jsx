@@ -1,9 +1,9 @@
 import axios from "axios"
 
-export default function Remedio({id, nome, validade}) {
+export default function SobraRemedio({id, nome, validade}) {
 
     async function handleDelete() {
-        axios.delete(`http://localhost:5000/${id}`)
+        axios.delete(`http://localhost:5000/sobra/${id}`)
     }
 
     return (
