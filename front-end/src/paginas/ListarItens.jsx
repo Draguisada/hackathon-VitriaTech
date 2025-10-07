@@ -32,12 +32,18 @@ export default function ListarItens() {
     }
 
     function handleClick() {
-        adicionarRemedio('Generico', '10/10/12')
+        if (!nomeRemedio) return alert('Sem nome dado') 
+        adicionarRemedio(nomeRemedio, new Date().toLocaleString())
     }
+
+    const [nomeRemedio, mudarNome] = useState('')
+    
 
     return (
         <div>
-            <button onClick={handleClick}>Clique aqui para criar remedio genérico</button>
+            <input type="text" placeholder="Nome remedio" onChange={(e) => mudarNome(e.target.value)} />
+
+            <button onClick={handleClick}>Clique aqui para criar remedio</button>
             { remedio &&
             remedio.map(user => (
             
