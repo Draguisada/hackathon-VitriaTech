@@ -79,9 +79,9 @@ function tokenRequired(req, res, next) {
 // 🏥 ROTAS DE POSTOS DE SAÚDE
 // ===========================
 
-app.get("/api/postos_saude", async (req, res) => {
+app.get("/api/postos_saude/:id", async (req, res) => {
   try {
-    const result = await queryDB("SELECT * FROM postos_saude ORDER BY id_posto");
+    const result = await queryDB("SELECT * FROM postos_saude WHERE id_posto = $1 ORDER BY id_posto", [req.params.id]);
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });

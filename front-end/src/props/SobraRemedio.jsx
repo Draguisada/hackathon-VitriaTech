@@ -1,6 +1,6 @@
 import axios from "axios"
 
-export default function SobraRemedio({id, nome, validade, categoria, quantidadeSobra}) {
+export default function SobraRemedio({id, nome, validade, quantidadeSobra}) {
 
     async function handleDelete() {
         axios.delete(`http://localhost:5000/api/medicamentos/${id}`)
@@ -10,7 +10,6 @@ export default function SobraRemedio({id, nome, validade, categoria, quantidadeS
         <div>
             <h1>{nome}</h1>
             <p>Expira: {validade}</p>
-            <p>Categoria: {categoria}</p>
             <p>Quantidade Sobra: {quantidadeSobra}</p>
             <button onClick={handleDelete}>Remover</button>
         </div>
