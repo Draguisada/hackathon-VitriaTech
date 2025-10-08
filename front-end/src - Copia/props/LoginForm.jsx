@@ -38,7 +38,6 @@ export default function LoginForm() {
             if (response.data.posto?.id_posto) {
                 localStorage.setItem("id_posto", response.data.posto.id_posto);
             }
-            alert("Login realizado com sucesso!");
             window.location.href = "/dashboard";
         } catch (err) {
             // Se o backend não estiver rodando, simular login para teste

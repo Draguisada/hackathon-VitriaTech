@@ -29,6 +29,7 @@ export default function Registrar() {
 		try {
 			await axios.post("http://localhost:5000/api/register", form);
 			setSuccess("Cadastro realizado com sucesso!");
+			window.location.href = '/login';
 			setForm({
 				nome_posto: "",
 				cnpj_posto: "",

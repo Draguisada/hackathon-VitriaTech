@@ -1,11 +1,48 @@
 import ListarItens from './paginas/ListarItens'
 import './styles/App.css'
-import Login from './paginas/Login'
+import LoginForm from './paginas/Login'
 import Registrar from './paginas/Registrar';
 import Perfil from './paginas/Perfil';
+import LandingPage from './paginas/LandingPage';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 
 function App() {
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("id_posto");
+    window.location.href = "/";
+  }
+
+  const PrecisaToken = ({ children }) => {
+      const token = localStorage.getItem('token');
+      // Se não houver token, redireciona o usuário para a página de login
+      if (!token) {
+      return <Navigate to="/login" replace />;
+      }
+      // Se houver token, permite que o componente filho (Dashboard) seja renderizado
+      return children;
+  };
+
+    const MostrarSeToken = ({ children }) => {
+      const token = localStorage.getItem('token');
+      // Se não houver token, redireciona o usuário para a página de login
+      if (!token) {
+      return;
+      }
+      // Se houver token, permite que o componente filho (Dashboard) seja renderizado
+      return children;
+  };
+
+  const MostrarNaoSeToken = ({ children }) => {
+      const token = localStorage.getItem('token');
+      // Se não houver token, redireciona o usuário para a página de login
+      if (token) {
+      return;
+      }
+      // Se houver token, permite que o componente filho (Dashboard) seja renderizado
+      return children;
+  };
 
   return (
     <Router>
@@ -15,56 +52,46 @@ function App() {
           <Link to="/" className="brand">Vitria Tech</Link>
           <nav className="nav">
             <ul className="nav-links">
-              <li><Link to="/" className="nav-link">Home</Link></li>
-              <li><Link to="/dashboard" className="nav-link">medicamentos</Link></li>
+              <MostrarNaoSeToken>
+                <li><Link to="/" className="nav-link">Principal</Link></li>
+              </MostrarNaoSeToken>
+              <li><Link to="/dashboard" className="nav-link">Visualizar Medicamentos</Link></li>
             </ul>
-            <Link to="/login" className="login-btn">Login</Link>
+            <MostrarNaoSeToken>
+              <Link to="/login" className="login-btn">Login</Link>
+            </MostrarNaoSeToken>
+            <MostrarNaoSeToken>
+                <Link to="/" className="login-btn">Registrar-se</Link>
+              </MostrarNaoSeToken>
+            <MostrarSeToken>
+              <Link to="/" className="login-btn" onClick={handleLogout}>Sair</Link>
+            </MostrarSeToken>
           </nav>
         </header>
 
         <Routes>
           <Route 
             path="/login"
-            element={<Login />} 
+            element={<LoginForm />} 
           />
 
           <Route 
             path="/" 
-            element={
-              <div>
-                {/* Hero Section */}
-                <section className="hero-section">
-                  <div className="hero-banner">
-                    Banner Principal
-                  </div>
-                </section>
-
-                {/* About Section */}
-                <section className="about-section">
-                  <div className="about-image">
-                    🏔️
-                  </div>
-                  <div className="about-content">
-                    <h2>O que é a Vitria Tech</h2>
-                    <p>
-                      Nosso site conecta postos de saúde para facilitar a troca de informações sobre sobras e faltas de medicamentos, 
-                      promovendo o uso eficiente dos estoques e garantindo que mais pacientes recebam o tratamento necessário.
-                    </p>
-                  </div>
-                </section>
-              </div>
-            } 
+            element={<LandingPage/>} 
           />
 
           <Route
             path="/registrar"
             element={ <Registrar /> }
           />
-
-          <Route
-            path="/dashboard"
-            element={ <ListarItens /> }
-          />
+        
+            <Route
+              path="/dashboard"
+              element={ <PrecisaToken>
+                          <ListarItens/>
+                        </PrecisaToken> }
+            />
+          
 
           <Route
             path="/perfil"

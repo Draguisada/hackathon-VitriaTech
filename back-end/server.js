@@ -142,11 +142,11 @@ app.post("/api/register", async (req, res) => {
 
 app.post("/api/login", async (req, res) => {
   try {
-    const { email_posto, senha_posto } = req.body;
+    const { cnpj_posto, senha_posto } = req.body;
 
     const result = await queryDB(
-      "SELECT * FROM postos_saude WHERE email_posto = $1 AND ativo = TRUE",
-      [email_posto]
+      "SELECT * FROM postos_saude WHERE cnpj_posto = $1 AND ativo = TRUE",
+      [cnpj_posto]
     );
     const posto = result.rows[0];
     if (!posto) return res.status(401).json({ error: "Posto não encontrado" });
@@ -203,6 +203,18 @@ app.get("/api/medicamentos", async (req, res) => {
   }
 });
 
+app.delete("/api/medicamentos/:id", async (req, res) => {
+  try {
+    const result = await queryDB(
+      `DELETE FROM medicamentos WHERE id_medicamento = $1 RETURNING *`,
+      [req.params.id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post("/api/medicamentos", async (req, res) => {
   try {
     const { nome_medicamento, data_validade, falta, quantidade, id_posto } = req.body;
@@ -211,85 +223,6 @@ app.post("/api/medicamentos", async (req, res) => {
       [nome_medicamento, data_validade, falta, quantidade, id_posto]
     );
     res.status(201).json(result.rows[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Remova ou retorne erro nas rotas de estoque:
-app.get("/api/estoque", async (req, res) => {
-  res.status(404).json({ error: "Rota de estoque removida. Estoque agora está no próprio medicamento." });
-});
-
-app.delete("/api/medicamentos/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const estoque = await queryDB(
-      "SELECT 1 FROM estoque_postos WHERE id_medicamento = $1 LIMIT 1",
-      [id]
-    );
-    const transacoes = await queryDB(
-      "SELECT 1 FROM transacoes_postos WHERE id_medicamento = $1 LIMIT 1",
-      [id]
-    );
-
-    if (estoque.length > 0 || transacoes.length > 0) {
-      return res.status(400).json({
-        error: "Não é possível deletar o medicamento: ele está vinculado a estoques ou transações.",
-      });
-    }
-
-    await queryDB("DELETE FROM medicamentos WHERE id_medicamento = $1", [id]);
-    res.json({ message: "Medicamento deletado com sucesso" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ===========================
-// 📦 ROTAS DE ESTOQUE
-// ===========================
-
-app.get("/api/estoque", async (req, res) => {
-  try {
-    const result = await queryDB(`
-      SELECT e.*, p.nome_posto, m.nome_medicamento, c.nome_categoria
-      FROM estoque_postos e
-      JOIN postos_saude p ON e.id_posto = p.id_posto
-      JOIN medicamentos m ON e.id_medicamento = m.id_medicamento
-      JOIN categorias_medicamentos c ON m.id_categoria = c.id_categoria
-      ORDER BY p.nome_posto, m.nome_medicamento
-    `);
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post("/api/estoque", tokenRequired, async (req, res) => {
-  try {
-    const { id_medicamento, quantidade } = req.body;
-    const posto_id = req.currentPosto.posto_id;
-    const result = await queryDB(
-      "INSERT INTO estoque_postos (id_posto, id_medicamento, quantidade) VALUES ($1,$2,$3) RETURNING *",
-      [posto_id, id_medicamento, quantidade]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.put("/api/estoque/:id_estoque", async (req, res) => {
-  try {
-    const { quantidade } = req.body;
-    const id_estoque = req.params.id_estoque;
-    const result = await queryDB(
-      "UPDATE estoque_postos SET quantidade = $1 WHERE id_estoque = $2 RETURNING *",
-      [quantidade, id_estoque]
-    );
-    res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

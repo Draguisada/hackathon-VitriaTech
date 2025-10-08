@@ -25,12 +25,14 @@ export default function ListarItens() {
     }, []);
 
     async function adicionarRemedio(nome_medicamento, data_validade) {    
-        await axios.post( 'http://localhost:5000/api/medicamentos/', {nome_medicamento, data_validade, id_categoria, falta: false, quantidade: sobrando});
+        const id_posto = localStorage.getItem('id_posto');
+        await axios.post( 'http://localhost:5000/api/medicamentos/', {id_posto, nome_medicamento, data_validade, id_categoria, falta: false, quantidade: sobrando});
     }
 
     async function adicionarRemedioFaltando(nome_medicamento) {    
         const quantidade = faltando;
-        await axios.post( 'http://localhost:5000/api/medicamentos/', {nome_medicamento, data_validade: '01/01/1970', id_categoria, falta: true, quantidade});
+        const id_posto = localStorage.getItem('id_posto');
+        await axios.post( 'http://localhost:5000/api/medicamentos/', {id_posto, nome_medicamento, data_validade: '01/01/1970', id_categoria, falta: true, quantidade});
     }
 
     function handleClick() {
