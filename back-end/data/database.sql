@@ -33,7 +33,8 @@ CREATE TABLE estoque_postos (
     id_posto INTEGER NOT NULL REFERENCES postos_saude(id_posto),
     id_medicamento INTEGER NOT NULL REFERENCES medicamentos(id_medicamento),
     quantidade INTEGER NOT NULL DEFAULT 0,
-    CONSTRAINT estoque_postos_pk PRIMARY KEY (id_estoque)
+    CONSTRAINT estoque_postos_pk PRIMARY KEY (id_estoque),
+    ON DELETE CASCADE;
 );
 
 CREATE TABLE transacoes_postos (

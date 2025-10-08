@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "start-back": "python3 ../back-end/app.py",
     "start-front": "vite",
-    "start": ""
+    "start": "concurrently \"npm run start-back\" \"npm run start-front\""
   },
   "dependencies": {
     "axios": "^1.12.2",

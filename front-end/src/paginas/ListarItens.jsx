@@ -10,13 +10,10 @@ export default function ListarItens() {
 
     async function listarDados() {
 
-        const response = await axios.get('http://localhost:5000/')
+        const response = await axios.get('http://localhost:5000/api/medicamentos')
 
-        let valores = Object.values(response.data);
-        valores = valores.map(e => JSON.parse(e))
+        mudarRemedios(response.data);
 
-        mudarRemedios(valores);
-        // console.log(valores)
     }
 
     useEffect(() => {
@@ -27,29 +24,31 @@ export default function ListarItens() {
 
     }, []);
 
-    async function adicionarRemedio(nome, validade) {
-        axios.post('http://localhost:5000/sobrando/', { nome, validade, sobrando })
+    async function adicionarRemedio(nome_medicamento, data_validade) {    
+    await axios.post( 'http://localhost:5000/api/medicamentos/', {nome_medicamento, data_validade, id_categoria});
     }
 
     function handleClick() {
         if (!nomeRemedio) return alert('Sem nome dado') 
-        adicionarRemedio(nomeRemedio, new Date().toLocaleString())
+        adicionarRemedio(nomeRemedio, new Date().toLocaleDateString());
     }
 
     const [nomeRemedio, mudarNome] = useState('')
     const [sobrando, mudarSobrando] = useState('')
+    const [id_categoria, mudarCategoria] = useState(1);
     
 
     return (
         <div>
             <input type="text" placeholder="Nome remedio" onChange={(e) => mudarNome(e.target.value)} />
             <input type="number" placeholder="Quantidade sobrando" onChange={(e) => mudarSobrando(e.target.value)} />
+            <input type="number" placeholder="Categoria" onChange={(e) => mudarCategoria(e.target.value)} />
 
             <button onClick={handleClick}>Clique aqui para criar remedio sobrando</button>
             { remedio &&
-            remedio.map(user => (
+            remedio.map(dados => (
             
-            <Remedio key={user.id} id={user.id} nome={user.nome} validade={user.validade}/>
+            <Remedio key={dados.id_medicamento} categoria={dados.nome_categoria} id={dados.id_medicamento} nome={dados.nome_medicamento} validade={dados.data_validade}/>
 
             ))}
         </div>
