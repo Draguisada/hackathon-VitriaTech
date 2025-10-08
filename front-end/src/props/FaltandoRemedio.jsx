@@ -1,10 +1,17 @@
+import axios from "axios"
 
+export default function FaltandoRemedio({id, nome, categoria, quantidadeFalta}) {
 
-
-export default function FaltandoRemedio() {
-
+    async function handleDelete() {
+        axios.delete(`http://localhost:5000/api/medicamentos/${id}`)
+    }
 
     return (
-        <h1>Não feito ainda</h1>
+        <div>
+            <h1>{nome}</h1>
+            <p>Faltando: {quantidadeFalta}</p>
+            <p>Categoria: {categoria}</p>
+            <button onClick={handleDelete}>Remover</button>
+        </div>
     )
 }

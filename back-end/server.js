@@ -75,6 +75,18 @@ function tokenRequired(req, res, next) {
 // ===========================
 // 🧩 ROTAS DE AUTENTICAÇÃO
 // ===========================
+// ===========================
+// 🏥 ROTAS DE POSTOS DE SAÚDE
+// ===========================
+
+app.get("/api/postos_saude", async (req, res) => {
+  try {
+    const result = await queryDB("SELECT * FROM postos_saude ORDER BY id_posto");
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 app.post("/api/register", async (req, res) => {
   try {
@@ -180,10 +192,9 @@ app.get("/api/me", tokenRequired, async (req, res) => {
 app.get("/api/medicamentos", async (req, res) => {
   try {
     const result = await queryDB(
-      `SELECT m.*, c.nome_categoria 
-       FROM medicamentos m 
-       JOIN categorias_medicamentos c ON m.id_categoria = c.id_categoria
-       ORDER BY m.id_medicamento`
+      `SELECT m.*, c.nome_categoria FROM medicamentos m
+      JOIN categorias_medicamentos c ON m.id_categoria = c.id_categoria
+      ORDER BY m.nome_medicamento`
     );
     res.json(result.rows);
   } catch (err) {
@@ -193,10 +204,11 @@ app.get("/api/medicamentos", async (req, res) => {
 
 app.post("/api/medicamentos", async (req, res) => {
   try {
-    const { nome_medicamento, id_categoria, data_validade } = req.body;
+    const { nome_medicamento, id_categoria, data_validade, falta, quantidade } = req.body;
+    console.log(falta)
     const result = await queryDB(
-      "INSERT INTO medicamentos (nome_medicamento, id_categoria, data_validade) VALUES ($1,$2,$3) RETURNING *",
-      [nome_medicamento, id_categoria, data_validade]
+      "INSERT INTO medicamentos (nome_medicamento, id_categoria, data_validade, falta, quantidade) VALUES ($1,$2,$3,$4,$5) RETURNING *",
+      [nome_medicamento, id_categoria, data_validade, falta, quantidade]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -206,10 +218,24 @@ app.post("/api/medicamentos", async (req, res) => {
 
 app.delete("/api/medicamentos/:id", async (req, res) => {
   try {
-    const {id } = req.params;
-    await queryDB("DELETE FROM medicamentos WHERE id_medicamento = $1", [
-      id,
-    ]);
+    const { id } = req.params;
+
+    const estoque = await queryDB(
+      "SELECT 1 FROM estoque_postos WHERE id_medicamento = $1 LIMIT 1",
+      [id]
+    );
+    const transacoes = await queryDB(
+      "SELECT 1 FROM transacoes_postos WHERE id_medicamento = $1 LIMIT 1",
+      [id]
+    );
+
+    if (estoque.length > 0 || transacoes.length > 0) {
+      return res.status(400).json({
+        error: "Não é possível deletar o medicamento: ele está vinculado a estoques ou transações.",
+      });
+    }
+
+    await queryDB("DELETE FROM medicamentos WHERE id_medicamento = $1", [id]);
     res.json({ message: "Medicamento deletado com sucesso" });
   } catch (err) {
     res.status(500).json({ error: err.message });

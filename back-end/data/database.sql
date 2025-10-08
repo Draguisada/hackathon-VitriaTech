@@ -14,29 +14,21 @@ CREATE TABLE postos_saude (
     CONSTRAINT postos_saude_pk PRIMARY KEY (id_posto)
 );
 
-CREATE TABLE categorias_medicamentos (
-    id_categoria SERIAL NOT NULL,
-    nome_categoria VARCHAR NOT NULL,
-    CONSTRAINT categorias_medicamentos_pk PRIMARY KEY (id_categoria)
-);
-
 CREATE TABLE medicamentos (
     id_medicamento SERIAL NOT NULL,
     nome_medicamento VARCHAR NOT NULL,
-    id_categoria INTEGER NOT NULL REFERENCES categorias_medicamentos(id_categoria),
     data_validade DATE NOT NULL,
+    falta BOOLEAN DEFAULT FALSE NULL,
+    quantidade INT NULL DEFAULT 0,
     CONSTRAINT medicamentos_pk PRIMARY KEY (id_medicamento)
 );
-
 CREATE TABLE estoque_postos (
     id_estoque SERIAL NOT NULL,
     id_posto INTEGER NOT NULL REFERENCES postos_saude(id_posto),
     id_medicamento INTEGER NOT NULL REFERENCES medicamentos(id_medicamento),
     quantidade INTEGER NOT NULL DEFAULT 0,
-    CONSTRAINT estoque_postos_pk PRIMARY KEY (id_estoque),
-    ON DELETE CASCADE;
+    CONSTRAINT estoque_postos_pk PRIMARY KEY (id_estoque)
 );
-
 CREATE TABLE transacoes_postos (
     id_transacao SERIAL NOT NULL,
     id_posto_fornecedor INTEGER NOT NULL REFERENCES postos_saude(id_posto),
@@ -46,3 +38,7 @@ CREATE TABLE transacoes_postos (
     status_transacao VARCHAR NOT NULL DEFAULT 'PENDENTE',
     CONSTRAINT transacoes_postos_pk PRIMARY KEY (id_transacao)
 );
+ALTER TABLE estoque_postos DROP CONSTRAINT estoque_postos_id_medicamento_fkey,
+    ADD CONSTRAINT estoque_postos_id_medicamento_fkey FOREIGN KEY (id_medicamento) REFERENCES medicamentos(id_medicamento) ON DELETE CASCADE;
+ALTER TABLE transacoes_postos DROP CONSTRAINT transacoes_postos_id_medicamento_fkey,
+    ADD CONSTRAINT transacoes_postos_id_medicamento_fkey FOREIGN KEY (id_medicamento) REFERENCES medicamentos(id_medicamento) ON DELETE CASCADE;

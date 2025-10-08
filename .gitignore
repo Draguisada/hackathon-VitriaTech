@@ -5,7 +5,7 @@
 **/lib
 
 
-**/.venv/
+**/venv/
 
 
 back-end/.env
