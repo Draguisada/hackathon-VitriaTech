@@ -50,7 +50,7 @@ export default function ListarItens() {
     const [id_categoria, mudarCategoria] = useState(1);
     const [pesquisa, mudarPesquisa] = useState('');
     const [vencimento, mudarVencimento] = useState('');
-
+    
 
     return (
         <div>
@@ -68,11 +68,9 @@ export default function ListarItens() {
             <input type="date" onChange={(e) => mudarVencimento(e.target.value.replaceAll('-', '/'))} />
             <hr/>
             <input type="text" name="Pesquisa" placeholder="pesquisa" onChange={(e) => mudarPesquisa(e.target.value)} />
-            <br />
-
 
             { remedio &&
-            remedio.filter(e => e.nome_medicamento.toLowerCase().includes(pesquisa.toLowerCase()) && e.falta == true).map(dados => (
+            remedio.filter(e => e.nome_medicamento.includes(pesquisa.toLowerCase()) && e.falta == true).map(dados => (
             
             <FaltandoRemedio quantidadeFalta={dados.quantidade} key={dados.id_medicamento} categoria={dados.nome_categoria} id={dados.id_medicamento} nome={dados.nome_medicamento}/>
 

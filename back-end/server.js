@@ -192,9 +192,10 @@ app.get("/api/me", tokenRequired, async (req, res) => {
 app.get("/api/medicamentos", async (req, res) => {
   try {
     const result = await queryDB(
-      `SELECT m.*, c.nome_categoria FROM medicamentos m
-      JOIN categorias_medicamentos c ON m.id_categoria = c.id_categoria
-      ORDER BY m.nome_medicamento`
+      `SELECT m.*, ps.nome_posto
+       FROM medicamentos m
+       JOIN postos_saude ps ON m.id_posto = ps.id_posto
+       ORDER BY m.nome_medicamento`
     );
     res.json(result.rows);
   } catch (err) {
@@ -204,16 +205,20 @@ app.get("/api/medicamentos", async (req, res) => {
 
 app.post("/api/medicamentos", async (req, res) => {
   try {
-    const { nome_medicamento, id_categoria, data_validade, falta, quantidade } = req.body;
-    console.log(falta)
+    const { nome_medicamento, data_validade, falta, quantidade, id_posto } = req.body;
     const result = await queryDB(
-      "INSERT INTO medicamentos (nome_medicamento, id_categoria, data_validade, falta, quantidade) VALUES ($1,$2,$3,$4,$5) RETURNING *",
-      [nome_medicamento, id_categoria, data_validade, falta, quantidade]
+      "INSERT INTO medicamentos (nome_medicamento, data_validade, falta, quantidade, id_posto) VALUES ($1,$2,$3,$4,$5) RETURNING *",
+      [nome_medicamento, data_validade, falta, quantidade, id_posto]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+// Remova ou retorne erro nas rotas de estoque:
+app.get("/api/estoque", async (req, res) => {
+  res.status(404).json({ error: "Rota de estoque removida. Estoque agora está no próprio medicamento." });
 });
 
 app.delete("/api/medicamentos/:id", async (req, res) => {
