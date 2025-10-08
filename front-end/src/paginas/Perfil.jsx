@@ -8,8 +8,9 @@ export default function Perfil() {
     }, [])
 
     async function listarDados() {
-        const response = await axios.get('http://localhost:5000/api/postos_saude')
-        mudarPosto(response.data[localStorage.getItem("id_posto") - 1]);
+        const id_posto = localStorage.getItem("id_posto")
+        const response = await axios.get(`http://localhost:5000/api/postos_saude/${id_posto}`)
+        mudarPosto(response.data[0]);
     }
 
     const [posto, mudarPosto] = useState({});

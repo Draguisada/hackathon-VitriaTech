@@ -10,6 +10,12 @@ function App() {
   return (
     <Router>
 
+      <nav>
+        <Link to={'/perfil'} style={{ marginRight: '1rem' }}>Perfil</Link>
+        <Link to={'/dashboard'} style={{ marginRight: '1rem' }}>Dashboard</Link>
+        <Link to={'/login'}>Login</Link>
+      </nav>
+
       <Routes>
         <Route 
         path="/login"
