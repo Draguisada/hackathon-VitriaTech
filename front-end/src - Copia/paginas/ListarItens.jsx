@@ -16,7 +16,11 @@ export default function ListarItens() {
     const carregarMedicamentos = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://localhost:5000/api/medicamentos');
+
+            const resposta1 = await axios.get(`http://localhost:5000/api/postos_saude/${localStorage.getItem('id_posto')}`);
+            const cep = `${resposta1.data[0].cep_posto}`
+
+            const response = await axios.get(`http://localhost:5000/api/medicamentos/cep/${cep.slice(0, 3)}`);
             setMedicamentos(response.data);
         } catch (error) {
             console.error('Erro ao carregar medicamentos:', error);

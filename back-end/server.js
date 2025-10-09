@@ -210,34 +210,13 @@ app.get("/api/me", tokenRequired, async (req, res) => {
 // 🥼 ROTAS DE POSTOS DE SAÚDE
 // ===========================
 
-app.get("/api/postos_saude", async (req, res) => {
+app.get("/api/postos_saude/cep/:cep", async (req, res) => {
   try {
-    // Se o usuário está autenticado, filtra por cidade
-    let cidadeFiltro = null;
-    let postos;
-    const authHeader = req.headers["authorization"];
-    if (authHeader) {
-      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : authHeader;
-      try {
-        const decoded = jwt.verify(token, SECRET_KEY);
-        // Buscar cidade do posto
-        const postoResult = await queryDB("SELECT cidade_posto FROM postos_saude WHERE id_posto = $1", [decoded.posto_id]);
-        cidadeFiltro = postoResult.rows[0]?.cidade_posto;
-      } catch (err) {
-        // Token inválido, ignora filtro
-      }
-    }
-    if (cidadeFiltro) {
-      postos = await queryDB(
-        "SELECT id_posto, nome_posto, cnpj_posto, endereco_posto, telefone_posto, email_posto, responsavel_posto FROM postos_saude WHERE ativo = TRUE AND cidade_posto = $1 ORDER BY nome_posto",
-        [cidadeFiltro]
-      );
-    } else {
-      postos = await queryDB(
-        "SELECT id_posto, nome_posto, cnpj_posto, endereco_posto, telefone_posto, email_posto, responsavel_posto FROM postos_saude WHERE ativo = TRUE ORDER BY nome_posto"
-      );
-    }
-    res.json(postos.rows);
+    const { cep } = req.params;
+    const result = await queryDB(
+      `SELECT * FROM postos_saude WHERE ativo = TRUE AND cep_posto LIKE '${cep}%' ORDER BY nome_posto`
+    );
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -262,13 +241,15 @@ app.get("/api/postos_saude/:id", async (req, res) => {
 // 💊 ROTAS DE MEDICAMENTOS
 // ===========================
 
-app.get("/api/medicamentos", async (req, res) => {
+app.get("/api/medicamentos/cep/:cep", async (req, res) => {
   try {
+    const { cep } = req.params;
+    console.log(cep);
     const result = await queryDB(
       `SELECT m.*, ps.nome_posto, ps.endereco_posto AS localizacao, ps.telefone_posto
        FROM medicamentos m
        JOIN postos_saude ps ON m.id_posto = ps.id_posto
-       WHERE ps.ativo = TRUE
+       WHERE ps.ativo = TRUE AND ps.cep_posto LIKE '${cep}%'
        ORDER BY m.nome_medicamento`
     );
     res.json(result.rows);

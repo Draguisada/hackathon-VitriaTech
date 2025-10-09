@@ -7,8 +7,7 @@ export default function Registrar() {
 		nome_posto: "",
 		cnpj_posto: "",
 		endereco_posto: "",
-		cidade_posto: "",
-		estado_posto:"",
+		cep_posto: "",
 		telefone_posto: "",
 		email_posto: "",
 		senha_posto: "",
@@ -36,8 +35,7 @@ export default function Registrar() {
 				nome_posto: "",
 				cnpj_posto: "",
 				endereco_posto: "",
-				cidade_posto: "",
-				estado_posto:"",
+				cep_posto: "",
 				telefone_posto: "",
 				email_posto: "",
 				senha_posto: "",
@@ -93,6 +91,18 @@ export default function Registrar() {
 							required 
 						/>
 					</div>
+					<div className="form-group">
+						<label className="form-label">CEP</label>
+						<input 
+							name="cep_posto" 
+							className="form-input"
+							placeholder="Digite o CEP" 
+							value={form.cep_posto} 
+							onChange={handleChange} 
+							maxLength={8}
+							required 
+						/>
+					</div>
 					<div className="form-row">
 						<div className="form-group">
 							<label className="form-label">Telefone</label>
@@ -118,31 +128,7 @@ export default function Registrar() {
 						</div>
 					</div>
 					
-					<div className="form-row">
-						<div className="form-group">
-							<label className="form-label">Estado</label>
-							<input 
-								name="telefone_posto" 
-								className="form-input"
-								placeholder="(00) 00000-0000" 
-								value={form.telefone_posto} 
-								onChange={handleChange} 
-							/>
-						</div>
-						<div className="form-group">
-							<label className="form-label">Cidade</label>
-							<input 
-								name="email_posto" 
-								type="email" 
-								className="form-input"
-								placeholder="email@exemplo.com" 
-								value={form.email_posto} 
-								onChange={handleChange} 
-								required 
-							/>
-						</div>
-					</div>
-					
+
 					<div className="form-row">
 						<div className="form-group">
 							<label className="form-label">Senha</label>
