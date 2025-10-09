@@ -10,7 +10,10 @@ export default function CadastroSobra() {
         validade: '',
         quantidade: '',
         local: '',
-        observacoes: ''
+        observacoes: '',
+        miligramas: '',
+        aceitaGenericos: 'sim',
+        localizacao: ''
     });
 
     const handleInputChange = (e) => {
@@ -37,7 +40,10 @@ export default function CadastroSobra() {
                 nome_medicamento: formData.nomeMedicamento,
                 data_validade: formData.validade,
                 falta: false, // Sobra = false
-                quantidade: parseInt(formData.quantidade)
+                quantidade: parseInt(formData.quantidade),
+                miligramas: formData.miligramas,
+                aceita_genericos: formData.aceitaGenericos === 'sim',
+                localizacao: formData.localizacao || formData.local
             };
 
             await axios.post('http://localhost:5000/api/medicamentos/', dadosMedicamento);
@@ -209,6 +215,62 @@ export default function CadastroSobra() {
                                     }}
                                     placeholder="Ex: 50"
                                 />
+                            </div>
+
+                            <div>
+                                <label style={{
+                                    display: 'block',
+                                    marginBottom: '8px',
+                                    fontWeight: 'bold',
+                                    color: '#495057'
+                                }}>
+                                    Miligramas
+                                </label>
+                                <input
+                                    type="text"
+                                    name="miligramas"
+                                    value={formData.miligramas}
+                                    onChange={handleInputChange}
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px',
+                                        border: '2px solid #e9ecef',
+                                        borderRadius: '8px',
+                                        fontSize: '16px',
+                                        outline: 'none',
+                                        transition: 'border-color 0.3s'
+                                    }}
+                                    placeholder="Ex: 500mg"
+                                />
+                            </div>
+
+                            <div>
+                                <label style={{
+                                    display: 'block',
+                                    marginBottom: '8px',
+                                    fontWeight: 'bold',
+                                    color: '#495057'
+                                }}>
+                                    Remedio é Genérico *
+                                </label>
+                                <select
+                                    name="aceitaGenericos"
+                                    value={formData.aceitaGenericos}
+                                    onChange={handleInputChange}
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px',
+                                        border: '2px solid #e9ecef',
+                                        borderRadius: '8px',
+                                        fontSize: '16px',
+                                        outline: 'none',
+                                        transition: 'border-color 0.3s'
+                                    }}
+                                >
+                                    <option value="sim">Sim</option>
+                                    <option value="nao">Não</option>
+                                </select>
                             </div>
 
                             <div style={{ gridColumn: '1 / -1' }}>

@@ -88,7 +88,10 @@ export default function ListarItens() {
                     nome_medicamento: medicamentoAtual.nome_medicamento,
                     data_validade: medicamentoAtual.data_validade,
                     falta: medicamentoAtual.falta,
-                    quantidade: parseInt(novaQuantidade)
+                    quantidade: parseInt(novaQuantidade),
+                    miligramas: medicamentoAtual.miligramas,
+                    aceita_genericos: medicamentoAtual.aceita_genericos,
+                    localizacao: medicamentoAtual.localizacao
                 });
                 alert('Quantidade atualizada com sucesso!');
                 carregarMedicamentos();
@@ -264,6 +267,19 @@ export default function ListarItens() {
                                         <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
                                             <strong>Quantidade:</strong> {med.quantidade}
                                         </p>
+                                        {med.miligramas && (
+                                            <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                                <strong>Miligramas:</strong> {med.miligramas}
+                                            </p>
+                                        )}
+                                        <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                            <strong>Genéricos:</strong> {med.aceita_genericos ? 'Sim' : 'Não'}
+                                        </p>
+                                        {med.localizacao && (
+                                            <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                                <strong>Local:</strong> {med.localizacao}
+                                            </p>
+                                        )}
                                         <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
                                             <strong>Validade:</strong> {med.data_validade}
                                         </p>
@@ -375,15 +391,25 @@ export default function ListarItens() {
                                         </div>
                                     </div>
                                     <div style={{ marginBottom: '15px' }}>
-                                        <p style={{ margin: '5px 0', fontSize: '14px', fontWeight: 'bold' }}>
+                                        <p style={{ margin: '5px 0', fontSize: '16px', fontWeight: 'bold' }}>
                                             {med.nome_medicamento}
                                         </p>
                                         <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
-                                            <strong>Quantidade necessária:</strong> {med.quantidade}
+                                            <strong>Quantidade:</strong> {med.quantidade}
                                         </p>
+                                        {med.miligramas && (
+                                            <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                                <strong>Miligramas:</strong> {med.miligramas}
+                                            </p>
+                                        )}
                                         <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
-                                            <strong>Validade:</strong> {med.data_validade}
+                                            <strong>Genéricos:</strong> {med.aceita_genericos ? 'Sim' : 'Não'}
                                         </p>
+                                        {med.localizacao && (
+                                            <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                                <strong>Local:</strong> {med.localizacao}
+                                            </p>
+                                        )}
                                     </div>
                                     <div style={{ display: 'flex', gap: '8px' }}>
                                         <button 

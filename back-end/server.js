@@ -284,13 +284,14 @@ app.delete("/api/medicamentos/:id", async (req, res) => {
 
 app.post("/api/medicamentos", async (req, res) => {
   try {
-    const { nome_medicamento, data_validade, falta, quantidade, id_posto } = req.body;
+    const { nome_medicamento, data_validade, falta, quantidade, id_posto, miligramas, aceita_genericos, localizacao } = req.body;
     const result = await queryDB(
-      "INSERT INTO medicamentos (nome_medicamento, data_validade, falta, quantidade, id_posto) VALUES ($1,$2,$3,$4,$5) RETURNING *",
-      [nome_medicamento, data_validade, falta, quantidade, id_posto]
+      "INSERT INTO medicamentos (nome_medicamento, data_validade, falta, quantidade, id_posto, miligramas, aceita_genericos, localizacao) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *",
+      [nome_medicamento, data_validade, falta, quantidade, id_posto, miligramas || null, aceita_genericos !== undefined ? aceita_genericos : true, localizacao || null]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
+    console.log('Erro ao inserir medicamento:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -299,11 +300,11 @@ app.post("/api/medicamentos", async (req, res) => {
 app.put("/api/medicamentos/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { nome_medicamento, data_validade, falta, quantidade } = req.body;
+    const { nome_medicamento, data_validade, falta, quantidade, miligramas, aceita_genericos, localizacao } = req.body;
     
     const result = await queryDB(
-      "UPDATE medicamentos SET nome_medicamento = $1, data_validade = $2, falta = $3, quantidade = $4 WHERE id_medicamento = $5 RETURNING *",
-      [nome_medicamento, data_validade, falta, quantidade, id]
+      "UPDATE medicamentos SET nome_medicamento = $1, data_validade = $2, falta = $3, quantidade = $4, miligramas = $5, aceita_genericos = $6, localizacao = $7 WHERE id_medicamento = $8 RETURNING *",
+      [nome_medicamento, data_validade, falta, quantidade, miligramas || null, aceita_genericos !== undefined ? aceita_genericos : true, localizacao || null, id]
     );
     
     if (result.rows.length === 0) {

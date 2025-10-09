@@ -7,9 +7,9 @@ export default function CadastroFalta() {
     const [formData, setFormData] = useState({
         nomeMedicamento: '',
         quantidadeNecessaria: '',
-        urgencia: 'media',
-        local: '',
-        observacoes: ''
+        miligramas: '',
+        aceitaGenericos: 'sim',
+        localizacao: ''
     });
 
     const handleInputChange = (e) => {
@@ -36,7 +36,10 @@ export default function CadastroFalta() {
                 nome_medicamento: formData.nomeMedicamento,
                 data_validade: new Date().toISOString().split('T')[0], // Data atual como placeholder
                 falta: true, // Falta = true
-                quantidade: parseInt(formData.quantidadeNecessaria)
+                quantidade: parseInt(formData.quantidadeNecessaria),
+                miligramas: formData.miligramas,
+                aceita_genericos: formData.aceitaGenericos === 'sim',
+                localizacao: formData.localizacao
             };
 
             await axios.post('http://localhost:5000/api/medicamentos/', dadosMedicamento);
@@ -122,7 +125,7 @@ export default function CadastroFalta() {
                                         outline: 'none',
                                         transition: 'border-color 0.3s'
                                     }}
-                                    placeholder="Ex: Amoxicilina 500mg"
+                                    placeholder="Ex: Amoxicilina"
                                 />
                             </div>
 
@@ -162,11 +165,38 @@ export default function CadastroFalta() {
                                     fontWeight: 'bold',
                                     color: '#495057'
                                 }}>
-                                    Nível de Urgência *
+                                    Miligramas
+                                </label>
+                                <input
+                                    type="text"
+                                    name="miligramas"
+                                    value={formData.miligramas}
+                                    onChange={handleInputChange}
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px',
+                                        border: '2px solid #e9ecef',
+                                        borderRadius: '8px',
+                                        fontSize: '16px',
+                                        outline: 'none',
+                                        transition: 'border-color 0.3s'
+                                    }}
+                                    placeholder="Ex: 500mg"
+                                />
+                            </div>
+
+                            <div>
+                                <label style={{
+                                    display: 'block',
+                                    marginBottom: '8px',
+                                    fontWeight: 'bold',
+                                    color: '#495057'
+                                }}>
+                                    Aceita Genéricos *
                                 </label>
                                 <select
-                                    name="urgencia"
-                                    value={formData.urgencia}
+                                    name="aceitaGenericos"
+                                    value={formData.aceitaGenericos}
                                     onChange={handleInputChange}
                                     required
                                     style={{
@@ -179,26 +209,24 @@ export default function CadastroFalta() {
                                         transition: 'border-color 0.3s'
                                     }}
                                 >
-                                    <option value="baixa">Baixa</option>
-                                    <option value="media">Média</option>
-                                    <option value="alta">Alta</option>
-                                    <option value="critica">Crítica</option>
+                                    <option value="sim">Sim</option>
+                                    <option value="nao">Não</option>
                                 </select>
                             </div>
 
-                            <div style={{ gridColumn: '1 / -1' }}>
+                            <div>
                                 <label style={{
                                     display: 'block',
                                     marginBottom: '8px',
                                     fontWeight: 'bold',
                                     color: '#495057'
                                 }}>
-                                    Local do Posto *
+                                    Localização do Posto *
                                 </label>
                                 <input
                                     type="text"
-                                    name="local"
-                                    value={formData.local}
+                                    name="localizacao"
+                                    value={formData.localizacao}
                                     onChange={handleInputChange}
                                     required
                                     style={{
@@ -210,64 +238,11 @@ export default function CadastroFalta() {
                                         outline: 'none',
                                         transition: 'border-color 0.3s'
                                     }}
-                                    placeholder="Ex: UBS Ceniro Martins - São José SC"
+                                    placeholder="Ex: UBS Centro - São José SC"
                                 />
                             </div>
 
-                            <div style={{ gridColumn: '1 / -1' }}>
-                                <label style={{
-                                    display: 'block',
-                                    marginBottom: '8px',
-                                    fontWeight: 'bold',
-                                    color: '#495057'
-                                }}>
-                                    Observações
-                                </label>
-                                <textarea
-                                    name="observacoes"
-                                    value={formData.observacoes}
-                                    onChange={handleInputChange}
-                                    rows="4"
-                                    style={{
-                                        width: '100%',
-                                        padding: '12px',
-                                        border: '2px solid #e9ecef',
-                                        borderRadius: '8px',
-                                        fontSize: '16px',
-                                        outline: 'none',
-                                        transition: 'border-color 0.3s',
-                                        resize: 'vertical'
-                                    }}
-                                    placeholder="Informações adicionais sobre a necessidade do medicamento..."
-                                />
-                            </div>
-                        </div>
-
-                        {/* Indicador de Urgência */}
-                        <div style={{
-                            backgroundColor: formData.urgencia === 'critica' ? '#f8d7da' : 
-                                          formData.urgencia === 'alta' ? '#fff3cd' : 
-                                          formData.urgencia === 'media' ? '#d1ecf1' : '#d4edda',
-                            border: `2px solid ${formData.urgencia === 'critica' ? '#f5c6cb' : 
-                                          formData.urgencia === 'alta' ? '#ffeaa7' : 
-                                          formData.urgencia === 'media' ? '#bee5eb' : '#c3e6cb'}`,
-                            borderRadius: '8px',
-                            padding: '15px',
-                            marginBottom: '20px',
-                            textAlign: 'center'
-                        }}>
-                            <p style={{ 
-                                margin: '0', 
-                                fontWeight: 'bold',
-                                color: formData.urgencia === 'critica' ? '#721c24' : 
-                                      formData.urgencia === 'alta' ? '#856404' : 
-                                      formData.urgencia === 'media' ? '#0c5460' : '#155724'
-                            }}>
-                                {formData.urgencia === 'critica' && '🚨 URGÊNCIA CRÍTICA - Medicamento essencial em falta!'}
-                                {formData.urgencia === 'alta' && '⚠️ URGÊNCIA ALTA - Medicamento necessário com prioridade!'}
-                                {formData.urgencia === 'media' && 'ℹ️ URGÊNCIA MÉDIA - Medicamento necessário'}
-                                {formData.urgencia === 'baixa' && '✅ URGÊNCIA BAIXA - Medicamento desejado'}
-                            </p>
+ 
                         </div>
 
                         <div style={{ 
