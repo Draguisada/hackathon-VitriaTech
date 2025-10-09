@@ -53,7 +53,7 @@ export default function Perfil() {
 
       // Carregar medicamentos do posto
       if (postoData) {
-        const medicamentosResponse = await axios.get(`http://localhost:5000/api/postos_saude/${postoData.id_posto}`);
+        const medicamentosResponse = await axios.get(`http://localhost:5000/api/medicamentos/${postoData.id_posto}`);
         setMedicamentos(medicamentosResponse.data);
       }
 

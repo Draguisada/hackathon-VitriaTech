@@ -6,6 +6,7 @@ import Perfil from './paginas/Perfil';
 // import Perfil from '../src/paginas/Perfil';
 import LandingPage from './paginas/LandingPage';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import Comunicacao from './paginas/Comunicacao';
 
 function App() {
 
@@ -18,8 +19,7 @@ function App() {
   const PrecisaToken = ({ children }) => {
       const token = localStorage.getItem('token');
 
-      // PARA DEBUG ==============================================
-      return children;
+
 
       // Se não houver token, redireciona o usuário para a página de login
       if (!token) {
@@ -32,8 +32,7 @@ function App() {
     const MostrarSeToken = ({ children }) => {
       const token = localStorage.getItem('token');
       
-      // PARA DEBUG ==============================================
-      return children;
+
 
       // Se não houver token, redireciona o usuário para a página de login
       if (!token) {
@@ -46,8 +45,7 @@ function App() {
   const MostrarNaoSeToken = ({ children }) => {
       const token = localStorage.getItem('token');
 
-      // PARA DEBUG ==============================================
-      return children;
+
 
       // Se não houver token, redireciona o usuário para a página de login
       if (token) {
@@ -95,6 +93,11 @@ function App() {
           <Route 
             path="/" 
             element={<LandingPage/>} 
+          />
+
+          <Route 
+            path="/comunicacao" 
+            element={<Comunicacao/>} 
           />
 
           <Route

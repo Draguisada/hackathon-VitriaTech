@@ -255,6 +255,21 @@ app.get("/api/medicamentos", async (req, res) => {
   }
 });
 
+app.get("/api/medicamentos/:id", async (req, res) => {
+  try {
+    const result = await queryDB(
+      `SELECT m.*, ps.nome_posto, ps.endereco_posto, ps.telefone_posto
+       FROM medicamentos m
+       JOIN postos_saude ps ON m.id_posto = ps.id_posto
+       WHERE m.id_posto = $1
+       ORDER BY m.nome_medicamento`, [req.params.id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.delete("/api/medicamentos/:id", async (req, res) => {
   try {
     const result = await queryDB(

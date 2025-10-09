@@ -1,35 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function Perfil() {
+
+export default function Comunicacao() {
   const [posto, setPosto] = useState(null);
   const [medicamentos, setMedicamentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
-  // Função para obter headers de autenticação
-  function getAuthHeaders() {
-    const token = localStorage.getItem('token');
-    return {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-  }
 
   useEffect(() => {
     carregarDadosPerfil();
-  }, [searchParams]);
+  }, []);
 
   async function carregarDadosPerfil() {
     try {
       setLoading(true);
       setError(null);
 
-      const id = searchParams.get("id");
+      const id = localStorage.getItem('comunicacao');
       const token = localStorage.getItem('token');
+      console.log(id);
       
       if (!token) {
         navigate('/login');
@@ -40,20 +32,17 @@ export default function Perfil() {
       if (id) {
         // Visualizar perfil de outro posto
         const response = await axios.get(`http://localhost:5000/api/postos_saude/${id}`);
-        postoData = response.data;
+        postoData = response.data[0];
       } else {
         // Visualizar próprio perfil
-        const response = await axios.get('http://localhost:5000/api/me', {
-          headers: getAuthHeaders()
-        });
-        postoData = response.data;
+        alert('deu problema')
       }
 
       setPosto(postoData);
 
       // Carregar medicamentos do posto
       if (postoData) {
-        const medicamentosResponse = await axios.get(`http://localhost:5000/api/medicamentos/${postoData.id_posto}`);
+        const medicamentosResponse = await axios.get(`http://localhost:5000/api/medicamentos/${id}`);
         setMedicamentos(medicamentosResponse.data);
       }
 
@@ -98,7 +87,7 @@ export default function Perfil() {
     );
   }
 
-  const isOwnProfile = !searchParams.get("id") || searchParams.get("id") === localStorage.getItem('id_posto');
+  const isOwnProfile = false;
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>

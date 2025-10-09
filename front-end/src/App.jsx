@@ -1,4 +1,4 @@
-import ListarItens from './paginas/ListarItens'
+
 import './App.css'
 import LoginForm from './props/LoginForm'
 import Registrar from './paginas/Registrar';
@@ -7,6 +7,7 @@ import PostoIndividual from './paginas/PostoIndividual';
 import ProtectedRoute from './components/ProtectedRoute';
 import Header from './components/Header';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import ListarItens from './paginas/ListarItens';
 
 function App() {
 

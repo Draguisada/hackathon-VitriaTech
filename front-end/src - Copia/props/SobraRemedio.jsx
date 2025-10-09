@@ -5,8 +5,47 @@ import { useEffect, useState } from "react";
 export default function SobraRemedio({id, nome, validade, quantidadeSobra, atualizar, id_posto}) {
 
     async function handleDelete() {
-        axios.delete(`http://localhost:5000/api/medicamentos/${id}`);
-        atualizar();
+        if (!window.confirm('Tem certeza que deseja remover este medicamento?')) {
+            return;
+        }
+
+        try {
+            await axios.delete(`http://localhost:5000/api/medicamentos/${id}`)
+            // Recarregar a página ou atualizar a lista
+            window.location.reload();
+        } catch (error) {
+            console.error('Erro ao remover medicamento:', error);
+            alert(error.response?.data?.error || 'Erro ao remover medicamento.');
+        }
+    }
+
+    async function handleSolicitar() {
+        const quantidade = prompt(`Quantas unidades você deseja solicitar? (Disponível: ${quantidadeSobra})`);
+        
+        if (!quantidade || quantidade <= 0) {
+            alert('Quantidade inválida');
+            return;
+        }
+
+        if (parseInt(quantidade) > quantidadeSobra) {
+            alert('Quantidade solicitada maior que a disponível');
+            return;
+        }
+
+        localStorage.setItem('comunicacao', id_posto);
+        window.location.href = '/comunicacao';
+
+        // try {
+        //     const response = await axios.post(
+        //         `http://localhost:5000/api/medicamentos/${id}/solicitar`,
+        //         { quantidade_solicitada: parseInt(quantidade) }
+        //     );
+            
+        //     alert('Solicitação enviada com sucesso!');
+        // } catch (error) {
+        //     console.error('Erro ao solicitar medicamento:', error);
+        //     alert(error.response?.data?.error || 'Erro ao solicitar medicamento');
+        // }
     }
 
     const [dono, mudarDono] = useState(false);
@@ -21,21 +60,6 @@ export default function SobraRemedio({id, nome, validade, quantidadeSobra, atual
         return mudarDono(true);
     }, [])
 
-    const pedirRequisicao = async () => {
-        // To-do: Fazer a requisição para o backend
-        try {
-            const response = await axios.post(`http://localhost:5000/api/requisicoes`, {
-                medicamento_id: id,
-                posto_solicitante: localStorage.getItem('id_posto'),
-                posto_dono: id_posto
-            });
-            console.log(response.data)
-            alert(`Requisição enviada ao posto dono (ID: ${id_posto})`);
-        } catch (error) {
-            alert("Erro ao solicitar requisição. ", error);
-        }
-    }
-
     return (
         <div className="sobra-card">
             <h3 className="sobra-name">{nome}</h3>
@@ -48,10 +72,10 @@ export default function SobraRemedio({id, nome, validade, quantidadeSobra, atual
             {dono ?
             <button onClick={handleDelete} className="remove-button">
                 Remover Medicamento
-            </button> :
-
+            </button>
+            :
             // Se não for o dono
-            <button onClick={pedirRequisicao} className="request-button">
+            <button onClick={handleSolicitar} className="request-button">
                 Solicitar Requisição
             </button>
             }
