@@ -90,7 +90,7 @@ export default function ListarItens() {
                     falta: medicamentoAtual.falta,
                     quantidade: parseInt(novaQuantidade),
                     miligramas: medicamentoAtual.miligramas,
-                    aceita_genericos: medicamentoAtual.aceita_genericos
+                    aceita_genericos: medicamentoAtual.aceita_genericos 
                 });
                 alert('Quantidade atualizada com sucesso!');
                 carregarMedicamentos();
@@ -108,6 +108,11 @@ export default function ListarItens() {
     const medicamentosFiltradosFaltando = medicamentosFaltando.filter(med => 
         med.nome_medicamento.toLowerCase().includes(pesquisa.toLowerCase())
     );
+
+    function handleComunicacao(id_posto) {
+        localStorage.setItem('comunicacao', id_posto);
+        navigate('/comunicacao');
+    }
 
     if (loading) {
         return (
@@ -283,6 +288,7 @@ export default function ListarItens() {
                                             <strong>Validade:</strong> {med.data_validade}
                                         </p>
                                     </div>
+                                    { med.id_posto == localStorage.getItem('id_posto') ?
                                     <div style={{ display: 'flex', gap: '8px' }}>
                                         <button 
                                             onClick={() => handleEditarQuantidade(med.id_medicamento)}
@@ -316,8 +322,24 @@ export default function ListarItens() {
                                         >
                                             Excluir
                                         </button>
-                                    </div>
-                                </div>
+                                    </div> :
+                                    <button 
+                                            onClick={() => handleComunicacao(med.id_posto)}
+                                            style={{
+                                                backgroundColor: '#dc3545',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '8px 12px',
+                                                borderRadius: '6px',
+                                                fontSize: '16px',
+                                                fontWeight: 'bold',
+                                                cursor: 'pointer',
+                                                flex: 1
+                                            }}
+                                        >
+                                            Contato com o dono
+                                        </button>}
+                                </div> 
                 ))}
             </div>
                     )}
@@ -410,6 +432,7 @@ export default function ListarItens() {
                                             </p>
                                         )}
                                     </div>
+                                    { med.id_posto == localStorage.getItem('id_posto') ?
                                     <div style={{ display: 'flex', gap: '8px' }}>
                                         <button 
                                             onClick={() => handleEditarQuantidade(med.id_medicamento)}
@@ -444,6 +467,24 @@ export default function ListarItens() {
                                             Excluir
                                         </button>
                                     </div>
+                                    :
+                                    <button 
+                                            onClick={() => handleComunicacao(med.id_posto)}
+                                            style={{
+                                                backgroundColor: '#dc3545',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '8px 12px',
+                                                borderRadius: '6px',
+                                                fontSize: '16px',
+                                                fontWeight: 'bold',
+                                                cursor: 'pointer',
+                                                flex: 1
+                                            }}
+                                        >
+                                            Contato com o dono
+                                        </button>
+                                    }
                                 </div>
                             ))}
                         </div>

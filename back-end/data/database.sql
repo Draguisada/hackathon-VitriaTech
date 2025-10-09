@@ -3,6 +3,8 @@
         nome_posto VARCHAR NOT NULL,
         cnpj_posto CHAR(14) NOT NULL,
         endereco_posto VARCHAR NOT NULL,
+        cidade_posto VARCHAR NOT NULL,
+        estado_posto VARCHAR NOT NULL,
         telefone_posto VARCHAR NULL,
         email_posto VARCHAR NOT NULL,
         senha_posto VARCHAR NOT NULL,
@@ -10,7 +12,7 @@
         tipo_usuario VARCHAR NOT NULL DEFAULT 'FARMACEUTICO',
         ativo BOOLEAN DEFAULT TRUE NOT NULL,
         data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        miligramas INT DEFAULT 0 NULL,
+        miligramas VARCHAR(8) DEFAULT '0' NULL,
         aceita_genericos BOOLEAN DEFAULT TRUE NULL,
         
         CONSTRAINT postos_saude_unique UNIQUE (cnpj_posto, email_posto),

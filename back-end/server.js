@@ -212,10 +212,32 @@ app.get("/api/me", tokenRequired, async (req, res) => {
 
 app.get("/api/postos_saude", async (req, res) => {
   try {
-    const result = await queryDB(
-      "SELECT id_posto, nome_posto, cnpj_posto, endereco_posto, telefone_posto, email_posto, responsavel_posto FROM postos_saude WHERE ativo = TRUE ORDER BY nome_posto"
-    );
-    res.json(result.rows);
+    // Se o usuário está autenticado, filtra por cidade
+    let cidadeFiltro = null;
+    let postos;
+    const authHeader = req.headers["authorization"];
+    if (authHeader) {
+      const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : authHeader;
+      try {
+        const decoded = jwt.verify(token, SECRET_KEY);
+        // Buscar cidade do posto
+        const postoResult = await queryDB("SELECT cidade_posto FROM postos_saude WHERE id_posto = $1", [decoded.posto_id]);
+        cidadeFiltro = postoResult.rows[0]?.cidade_posto;
+      } catch (err) {
+        // Token inválido, ignora filtro
+      }
+    }
+    if (cidadeFiltro) {
+      postos = await queryDB(
+        "SELECT id_posto, nome_posto, cnpj_posto, endereco_posto, telefone_posto, email_posto, responsavel_posto FROM postos_saude WHERE ativo = TRUE AND cidade_posto = $1 ORDER BY nome_posto",
+        [cidadeFiltro]
+      );
+    } else {
+      postos = await queryDB(
+        "SELECT id_posto, nome_posto, cnpj_posto, endereco_posto, telefone_posto, email_posto, responsavel_posto FROM postos_saude WHERE ativo = TRUE ORDER BY nome_posto"
+      );
+    }
+    res.json(postos.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -322,8 +344,8 @@ app.put("/api/medicamentos/:id", async (req, res) => {
     }
 
     const result = await queryDB(
-      "UPDATE medicamentos SET nome_medicamento = $1, data_validade = $2, falta = $3, quantidade = $4, miligramas = $5, aceita_genericos = $6, localizacao = $7 WHERE id_medicamento = $8 RETURNING *",
-      [nome_medicamento, data_validade, falta, quantidade, miligramas || null, aceita_genericos !== undefined ? aceita_genericos : true, localizacao, id]
+      "UPDATE medicamentos SET nome_medicamento = $1, data_validade = $2, falta = $3, quantidade = $4, miligramas = $5, aceita_genericos = $6 WHERE id_medicamento = $7 RETURNING *",
+      [nome_medicamento, data_validade, falta, quantidade, miligramas || null, aceita_genericos !== undefined ? aceita_genericos : true, id]
     );
 
     if (result.rows.length === 0) {
