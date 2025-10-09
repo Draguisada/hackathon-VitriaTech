@@ -7,6 +7,8 @@ export default function Registrar() {
 		nome_posto: "",
 		cnpj_posto: "",
 		endereco_posto: "",
+		cidade_posto: "",
+		estado_posto:"",
 		telefone_posto: "",
 		email_posto: "",
 		senha_posto: "",
@@ -34,6 +36,8 @@ export default function Registrar() {
 				nome_posto: "",
 				cnpj_posto: "",
 				endereco_posto: "",
+				cidade_posto: "",
+				estado_posto:"",
 				telefone_posto: "",
 				email_posto: "",
 				senha_posto: "",
@@ -79,6 +83,27 @@ export default function Registrar() {
 					</div>
 					
 					<div className="form-group">
+						<label className="form-label">Endereço</label>
+						<input 
+							name="endereco_posto" 
+							className="form-input"
+							placeholder="Digite o endereço completo" 
+							value={form.endereco_posto} 
+							onChange={handleChange} 
+							required 
+						/>
+					</div>
+
+					<div className="form-group">
+						<label className="form-label">Endereço</label>
+						<input 
+							name="endereco_posto" 
+							className="form-input"
+							placeholder="Digite o endereço completo" 
+							value={form.endereco_posto} 
+							onChange={handleChange} 
+							required 
+						/>
 						<label className="form-label">Endereço</label>
 						<input 
 							name="endereco_posto" 
