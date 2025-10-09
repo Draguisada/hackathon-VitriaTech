@@ -93,28 +93,6 @@ export default function Registrar() {
 							required 
 						/>
 					</div>
-
-					<div className="form-group">
-						<label className="form-label">Endereço</label>
-						<input 
-							name="endereco_posto" 
-							className="form-input"
-							placeholder="Digite o endereço completo" 
-							value={form.endereco_posto} 
-							onChange={handleChange} 
-							required 
-						/>
-						<label className="form-label">Endereço</label>
-						<input 
-							name="endereco_posto" 
-							className="form-input"
-							placeholder="Digite o endereço completo" 
-							value={form.endereco_posto} 
-							onChange={handleChange} 
-							required 
-						/>
-					</div>
-					
 					<div className="form-row">
 						<div className="form-group">
 							<label className="form-label">Telefone</label>
@@ -128,6 +106,31 @@ export default function Registrar() {
 						</div>
 						<div className="form-group">
 							<label className="form-label">Email</label>
+							<input 
+								name="email_posto" 
+								type="email" 
+								className="form-input"
+								placeholder="email@exemplo.com" 
+								value={form.email_posto} 
+								onChange={handleChange} 
+								required 
+							/>
+						</div>
+					</div>
+					
+					<div className="form-row">
+						<div className="form-group">
+							<label className="form-label">Estado</label>
+							<input 
+								name="telefone_posto" 
+								className="form-input"
+								placeholder="(00) 00000-0000" 
+								value={form.telefone_posto} 
+								onChange={handleChange} 
+							/>
+						</div>
+						<div className="form-group">
+							<label className="form-label">Cidade</label>
 							<input 
 								name="email_posto" 
 								type="email" 
