@@ -164,7 +164,7 @@ export default function ListarItens() {
                                 border: 'none',
                                 padding: '12px 24px',
                                 borderRadius: '8px',
-                                fontSize: '16px',
+                                fontSize: '20px',
                                 fontWeight: 'bold',
                                 cursor: 'pointer',
                                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
@@ -262,33 +262,33 @@ export default function ListarItens() {
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             color: 'white',
-                                            fontSize: '14px',
+                                            fontSize: '18px',
                                             fontWeight: 'bold'
                                         }}>
                                             {med.nome_medicamento.split(' ')[0]}
                                         </div>
                                     </div>
                                     <div style={{ marginBottom: '15px' }}>
-                                        <p style={{ margin: '5px 0', fontSize: '14px', fontWeight: 'bold' }}>
+                                        <p style={{ margin: '5px 0', fontSize: '18px', fontWeight: 'bold' }}>
                                             {med.nome_medicamento}
                                         </p>
-                                        <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                        <p style={{ margin: '5px 0', fontSize: '16px', color: '#666' }}>
                                             <strong>Quantidade:</strong> {med.quantidade}
                                         </p>
                                         {med.miligramas && (
-                                            <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                            <p style={{ margin: '5px 0', fontSize: '16px', color: '#666' }}>
                                                 <strong>Miligramas:</strong> {med.miligramas}
                                             </p>
                                         )}
-                                        <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                        <p style={{ margin: '5px 0', fontSize: '16px', color: '#666' }}>
                                             <strong>Genéricos:</strong> {med.aceita_genericos ? 'Sim' : 'Não'}
                                         </p>
                                         {med.localizacao && (
-                                            <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                            <p style={{ margin: '5px 0', fontSize: '16px', color: '#666' }}>
                                                 <strong>Local:</strong> {med.localizacao}
                                             </p>
                                         )}
-                                        <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                        <p style={{ margin: '5px 0', fontSize: '16px', color: '#666' }}>
                                             <strong>Validade:</strong> {med.data_validade}
                                         </p>
                                     </div>
@@ -302,7 +302,7 @@ export default function ListarItens() {
                                                 border: 'none',
                                                 padding: '8px 12px',
                                                 borderRadius: '6px',
-                                                fontSize: '12px',
+                                                fontSize: '16px',
                                                 fontWeight: 'bold',
                                                 cursor: 'pointer',
                                                 flex: 1
@@ -318,7 +318,7 @@ export default function ListarItens() {
                                                 border: 'none',
                                                 padding: '8px 12px',
                                                 borderRadius: '6px',
-                                                fontSize: '12px',
+                                                fontSize: '16px',
                                                 fontWeight: 'bold',
                                                 cursor: 'pointer',
                                                 flex: 1
@@ -335,7 +335,7 @@ export default function ListarItens() {
                                                 border: 'none',
                                                 padding: '8px 12px',
                                                 borderRadius: '6px',
-                                                fontSize: '16px',
+                                                fontSize: '20px',
                                                 fontWeight: 'bold',
                                                 cursor: 'pointer',
                                                 flex: 1
@@ -362,7 +362,7 @@ export default function ListarItens() {
                     <h2 style={{ 
                         color: '#495057', 
                         marginBottom: '20px',
-                        fontSize: '28px',
+                        fontSize: '32px',
                         fontWeight: 'bold',
                         textAlign: 'center'
                     }}>
@@ -377,7 +377,7 @@ export default function ListarItens() {
                             borderRadius: '12px',
                             boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                         }}>
-                            <p style={{ fontSize: '18px', color: '#6c757d' }}>
+                            <p style={{ fontSize: '22px', color: '#6c757d' }}>
                                 Nenhum medicamento em falta encontrado
                             </p>
                         </div>
@@ -409,29 +409,29 @@ export default function ListarItens() {
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             color: 'white',
-                                            fontSize: '14px',
+                                            fontSize: '18px',
                                             fontWeight: 'bold'
                                         }}>
                                             {med.nome_medicamento.split(' ')[0]}
                                         </div>
                                     </div>
                                     <div style={{ marginBottom: '15px' }}>
-                                        <p style={{ margin: '5px 0', fontSize: '16px', fontWeight: 'bold' }}>
+                                        <p style={{ margin: '5px 0', fontSize: '20px', fontWeight: 'bold' }}>
                                             {med.nome_medicamento}
                                         </p>
-                                        <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                        <p style={{ margin: '5px 0', fontSize: '16px', color: '#666' }}>
                                             <strong>Quantidade:</strong> {med.quantidade}
                                         </p>
                                         {med.miligramas && (
-                                            <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                            <p style={{ margin: '5px 0', fontSize: '16px', color: '#666' }}>
                                                 <strong>Miligramas:</strong> {med.miligramas}
                                             </p>
                                         )}
-                                        <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                        <p style={{ margin: '5px 0', fontSize: '16px', color: '#666' }}>
                                             <strong>Genéricos:</strong> {med.aceita_genericos ? 'Sim' : 'Não'}
                                         </p>
                                         {med.localizacao && (
-                                            <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                            <p style={{ margin: '5px 0', fontSize: '16px', color: '#666' }}>
                                                 <strong>Local:</strong> {med.localizacao}
                                             </p>
                                         )}
@@ -446,7 +446,7 @@ export default function ListarItens() {
                                                 border: 'none',
                                                 padding: '8px 12px',
                                                 borderRadius: '6px',
-                                                fontSize: '12px',
+                                                fontSize: '16px',
                                                 fontWeight: 'bold',
                                                 cursor: 'pointer',
                                                 flex: 1
@@ -462,7 +462,7 @@ export default function ListarItens() {
                                                 border: 'none',
                                                 padding: '8px 12px',
                                                 borderRadius: '6px',
-                                                fontSize: '12px',
+                                                fontSize: '16px',
                                                 fontWeight: 'bold',
                                                 cursor: 'pointer',
                                                 flex: 1
@@ -480,7 +480,7 @@ export default function ListarItens() {
                                                 border: 'none',
                                                 padding: '8px 12px',
                                                 borderRadius: '6px',
-                                                fontSize: '16px',
+                                                fontSize: '20px',
                                                 fontWeight: 'bold',
                                                 cursor: 'pointer',
                                                 flex: 1
