@@ -10,6 +10,9 @@
         tipo_usuario VARCHAR NOT NULL DEFAULT 'FARMACEUTICO',
         ativo BOOLEAN DEFAULT TRUE NOT NULL,
         data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        miligramas INT DEFAULT 0 NULL,
+        aceita_genericos BOOLEAN DEFAULT TRUE NULL,
+        
         CONSTRAINT postos_saude_unique UNIQUE (cnpj_posto, email_posto),
         CONSTRAINT postos_saude_pk PRIMARY KEY (id_posto)
     );

@@ -243,7 +243,7 @@ app.get("/api/postos_saude/:id", async (req, res) => {
 app.get("/api/medicamentos", async (req, res) => {
   try {
     const result = await queryDB(
-      `SELECT m.*, ps.nome_posto, ps.endereco_posto, ps.telefone_posto
+      `SELECT m.*, ps.nome_posto, ps.endereco_posto AS localizacao, ps.telefone_posto
        FROM medicamentos m
        JOIN postos_saude ps ON m.id_posto = ps.id_posto
        WHERE ps.ativo = TRUE
@@ -258,7 +258,7 @@ app.get("/api/medicamentos", async (req, res) => {
 app.get("/api/medicamentos/:id", async (req, res) => {
   try {
     const result = await queryDB(
-      `SELECT m.*, ps.nome_posto, ps.endereco_posto, ps.telefone_posto
+      `SELECT m.*, ps.nome_posto, ps.endereco_posto AS localizacao, ps.telefone_posto
        FROM medicamentos m
        JOIN postos_saude ps ON m.id_posto = ps.id_posto
        WHERE m.id_posto = $1
@@ -284,10 +284,19 @@ app.delete("/api/medicamentos/:id", async (req, res) => {
 
 app.post("/api/medicamentos", async (req, res) => {
   try {
-    const { nome_medicamento, data_validade, falta, quantidade, id_posto, miligramas, aceita_genericos, localizacao } = req.body;
+    const { nome_medicamento, data_validade, falta, quantidade, id_posto, miligramas, aceita_genericos } = req.body;
+
+    // Buscar localização do posto dono
+    // const postoResult = await queryDB(
+    //   "SELECT endereco_posto FROM postos_saude WHERE id_posto = $1",
+    //   [id_posto]
+    // );
+    // const localizacao = postoResult.rows[0]?.endereco_posto || null;
+    // console.log(postoResult.rows)
+
     const result = await queryDB(
-      "INSERT INTO medicamentos (nome_medicamento, data_validade, falta, quantidade, id_posto, miligramas, aceita_genericos, localizacao) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *",
-      [nome_medicamento, data_validade, falta, quantidade, id_posto, miligramas || null, aceita_genericos !== undefined ? aceita_genericos : true, localizacao || null]
+      "INSERT INTO medicamentos (nome_medicamento, data_validade, falta, quantidade, id_posto, miligramas, aceita_genericos) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *",
+      [nome_medicamento, data_validade, falta, quantidade, id_posto, miligramas || null, aceita_genericos !== undefined ? aceita_genericos : true]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -300,17 +309,27 @@ app.post("/api/medicamentos", async (req, res) => {
 app.put("/api/medicamentos/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { nome_medicamento, data_validade, falta, quantidade, miligramas, aceita_genericos, localizacao } = req.body;
-    
+    const { nome_medicamento, data_validade, falta, quantidade, miligramas, aceita_genericos, id_posto } = req.body;
+
+    // Buscar localização do posto dono
+    let localizacao = null;
+    if (id_posto) {
+      const postoResult = await queryDB(
+        "SELECT endereco_posto FROM postos_saude WHERE id_posto = $1",
+        [id_posto]
+      );
+      localizacao = postoResult.rows[0]?.endereco_posto || null;
+    }
+
     const result = await queryDB(
       "UPDATE medicamentos SET nome_medicamento = $1, data_validade = $2, falta = $3, quantidade = $4, miligramas = $5, aceita_genericos = $6, localizacao = $7 WHERE id_medicamento = $8 RETURNING *",
-      [nome_medicamento, data_validade, falta, quantidade, miligramas || null, aceita_genericos !== undefined ? aceita_genericos : true, localizacao || null, id]
+      [nome_medicamento, data_validade, falta, quantidade, miligramas || null, aceita_genericos !== undefined ? aceita_genericos : true, localizacao, id]
     );
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Medicamento não encontrado" });
     }
-    
+
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });

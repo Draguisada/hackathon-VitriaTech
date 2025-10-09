@@ -8,8 +8,8 @@ export default function CadastroFalta() {
         nomeMedicamento: '',
         quantidadeNecessaria: '',
         miligramas: '',
-        aceitaGenericos: 'sim',
-        localizacao: ''
+        aceitaGenericos: 'sim'
+        // localizacao: ''
     });
 
     const handleInputChange = (e) => {
@@ -38,8 +38,8 @@ export default function CadastroFalta() {
                 falta: true, // Falta = true
                 quantidade: parseInt(formData.quantidadeNecessaria),
                 miligramas: formData.miligramas,
-                aceita_genericos: formData.aceitaGenericos === 'sim',
-                localizacao: formData.localizacao
+                aceita_genericos: formData.aceitaGenericos === 'sim'
+                // localizacao: formData.localizacao
             };
 
             await axios.post('http://localhost:5000/api/medicamentos/', dadosMedicamento);
@@ -214,7 +214,7 @@ export default function CadastroFalta() {
                                 </select>
                             </div>
 
-                            <div>
+                            {/* <div>
                                 <label style={{
                                     display: 'block',
                                     marginBottom: '8px',
@@ -240,7 +240,7 @@ export default function CadastroFalta() {
                                     }}
                                     placeholder="Ex: UBS Centro - São José SC"
                                 />
-                            </div>
+                            </div> */}
 
  
                         </div>

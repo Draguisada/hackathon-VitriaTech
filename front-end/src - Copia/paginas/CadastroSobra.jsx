@@ -12,8 +12,8 @@ export default function CadastroSobra() {
         local: '',
         observacoes: '',
         miligramas: '',
-        aceitaGenericos: 'sim',
-        localizacao: ''
+        aceitaGenericos: 'sim'
+        
     });
 
     const handleInputChange = (e) => {
@@ -42,8 +42,8 @@ export default function CadastroSobra() {
                 falta: false, // Sobra = false
                 quantidade: parseInt(formData.quantidade),
                 miligramas: formData.miligramas,
-                aceita_genericos: formData.aceitaGenericos === 'sim',
-                localizacao: formData.localizacao || formData.local
+                aceita_genericos: formData.aceitaGenericos === 'sim'
+                // localizacao: formData.localizacao || formData.local
             };
 
             await axios.post('http://localhost:5000/api/medicamentos/', dadosMedicamento);
@@ -273,7 +273,7 @@ export default function CadastroSobra() {
                                 </select>
                             </div>
 
-                            <div style={{ gridColumn: '1 / -1' }}>
+                            {/* <div style={{ gridColumn: '1 / -1' }}>
                                 <label style={{
                                     display: 'block',
                                     marginBottom: '8px',
@@ -299,7 +299,7 @@ export default function CadastroSobra() {
                                     }}
                                     placeholder="Ex: Unidade de Saúde Getúlio Vargas - Concórdia SC"
                                 />
-                            </div>
+                            </div> */}
 
                             <div style={{ gridColumn: '1 / -1' }}>
                                 <label style={{

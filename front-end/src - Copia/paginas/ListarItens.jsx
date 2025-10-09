@@ -90,8 +90,7 @@ export default function ListarItens() {
                     falta: medicamentoAtual.falta,
                     quantidade: parseInt(novaQuantidade),
                     miligramas: medicamentoAtual.miligramas,
-                    aceita_genericos: medicamentoAtual.aceita_genericos,
-                    localizacao: medicamentoAtual.localizacao
+                    aceita_genericos: medicamentoAtual.aceita_genericos
                 });
                 alert('Quantidade atualizada com sucesso!');
                 carregarMedicamentos();
