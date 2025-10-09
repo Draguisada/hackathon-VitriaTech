@@ -3,19 +3,15 @@ import './App.css'
 import LoginForm from './props/LoginForm'
 import Registrar from './paginas/Registrar';
 import Perfil from './paginas/Perfil';
+import PostoIndividual from './paginas/PostoIndividual';
+import ProtectedRoute from './components/ProtectedRoute';
+import Header from './components/Header';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 
 function App() {
 
   return (
     <Router>
-
-      <nav>
-        <Link to={'/perfil'} style={{ marginRight: '1rem' }}>Perfil</Link>
-        <Link to={'/dashboard'} style={{ marginRight: '1rem' }}>Dashboard</Link>
-        <Link to={'/login'}>Login</Link>
-      </nav>
-
       <Routes>
         <Route 
         path="/login"
@@ -30,12 +26,38 @@ function App() {
 
         <Route
           path="/dashboard"
-          element={ <ListarItens /> }
+          element={ 
+            <ProtectedRoute>
+              <div>
+                <Header />
+                <ListarItens />
+              </div>
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/perfil"
-          element={ <Perfil /> }
+          element={ 
+            <ProtectedRoute>
+              <div>
+                <Header />
+                <Perfil />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/posto/:id"
+          element={ 
+            <ProtectedRoute>
+              <div>
+                <Header />
+                <PostoIndividual />
+              </div>
+            </ProtectedRoute>
+          }
         />
 
       </Routes>

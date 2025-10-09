@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-ro
 
 
 export default function LoginForm() {
-    const [email, setEmail] = useState("");
+    const [cnpj, setCnpj] = useState("");
     const [senha, setSenha] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -13,9 +13,17 @@ export default function LoginForm() {
         e.preventDefault();
         setLoading(true);
         setError("");
+        
+        // Validação básica do CNPJ
+        if (cnpj.length < 14) {
+            setError("CNPJ deve ter 14 dígitos");
+            setLoading(false);
+            return;
+        }
+        
         try {
             const response = await axios.post("http://localhost:5000/api/login", {
-                email_posto: email,
+                cnpj_posto: cnpj,
                 senha_posto: senha,
             });
             // Salvar token/localStorage ou redirecionar
@@ -36,10 +44,11 @@ export default function LoginForm() {
         <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: 300 }}>
             <h1>Login</h1>
             <input
-                type="email"
-                placeholder="Email do posto"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
+                type="text"
+                placeholder="CNPJ do posto (14 dígitos)"
+                value={cnpj}
+                onChange={e => setCnpj(e.target.value.replace(/\D/g, ''))}
+                maxLength={14}
                 required
             />
             <input
