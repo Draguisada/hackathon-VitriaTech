@@ -194,6 +194,31 @@
   text-align: center;
 }
 
+.botao-registrar {
+  background-color: white;
+  color: #007bff;
+  border: 2px solid #007bff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.25s ease-in-out;
+}
+
+.botao-registrar:hover {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .listar-container {
@@ -212,3 +237,5 @@
     font-size: 1.5rem;
   }
 }
+
+

@@ -26,7 +26,15 @@ export default function CadastroSobra() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+        // Validação: data de validade não pode ser antes de hoje
+        const hoje = new Date();
+        const validade = new Date(formData.validade);
+        hoje.setHours(0,0,0,0);
+        validade.setHours(0,0,0,0);
+        if (validade < hoje) {
+            alert('A data de validade não pode ser anterior à data atual.');
+            return;
+        }
         try {
             const id_posto = localStorage.getItem('id_posto');
             if (!id_posto) {
@@ -176,6 +184,7 @@ export default function CadastroSobra() {
                                     value={formData.validade}
                                     onChange={handleInputChange}
                                     required
+                                    min={new Date().toISOString().split('T')[0]}
                                     style={{
                                         width: '100%',
                                         padding: '12px',
