@@ -17,6 +17,10 @@ function App() {
 
   const PrecisaToken = ({ children }) => {
       const token = localStorage.getItem('token');
+
+      // PARA DEBUG ==============================================
+      return children;
+
       // Se não houver token, redireciona o usuário para a página de login
       if (!token) {
       return <Navigate to="/login" replace />;
@@ -27,6 +31,10 @@ function App() {
 
     const MostrarSeToken = ({ children }) => {
       const token = localStorage.getItem('token');
+      
+      // PARA DEBUG ==============================================
+      return children;
+
       // Se não houver token, redireciona o usuário para a página de login
       if (!token) {
       return;
@@ -37,6 +45,10 @@ function App() {
 
   const MostrarNaoSeToken = ({ children }) => {
       const token = localStorage.getItem('token');
+
+      // PARA DEBUG ==============================================
+      return children;
+
       // Se não houver token, redireciona o usuário para a página de login
       if (token) {
       return;
@@ -66,7 +78,7 @@ function App() {
             </MostrarNaoSeToken>
 
             <MostrarNaoSeToken>
-                <Link to="/" className="login-btn">Registrar-se</Link>
+                <Link to="/registrar" className="login-btn">Registrar-se</Link>
               </MostrarNaoSeToken>
             <MostrarSeToken>
               <Link to="/" className="login-btn" onClick={handleLogout}>Sair</Link>
