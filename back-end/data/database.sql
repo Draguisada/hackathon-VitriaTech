@@ -3,8 +3,8 @@
         nome_posto VARCHAR NOT NULL,
         cnpj_posto CHAR(14) NOT NULL,
         endereco_posto VARCHAR NOT NULL,
-        cidade_posto VARCHAR NOT NULL,
-        estado_posto VARCHAR NOT NULL,
+        cep VARCHAR(8) NOT NULL,
+        
         telefone_posto VARCHAR NULL,
         email_posto VARCHAR NOT NULL,
         senha_posto VARCHAR NOT NULL,
