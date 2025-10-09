@@ -269,7 +269,7 @@ export default function ListarItens() {
                                         </div>
                                     </div>
                                     <div style={{ marginBottom: '15px' }}>
-                                        <p style={{ margin: '5px 0', fontSize: '18px', fontWeight: 'bold' }}>
+                                        <p style={{ margin: '5px 0', fontSize: '18px', fontWeight: 'bold', width: 'fit-content' }}>
                                             {med.nome_medicamento}
                                         </p>
                                         <p style={{ margin: '5px 0', fontSize: '16px', color: '#666' }}>
