@@ -1,195 +1,430 @@
-import { useEffect, useState } from "react"
-import axios from "axios";
-import Remedio from '../props/SobraRemedio';
-import FaltandoRemedio from "../props/FaltandoRemedio";
-import "../styles/ListarItens.css";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function ListarItens() {
+    const navigate = useNavigate();
+    const [pesquisa, setPesquisa] = useState('');
+    const [medicamentos, setMedicamentos] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const tempoDeAtualizacao = 1000;
-    const [remedio, mudarRemedios] = useState([]);
-
-    async function listarDados() {
-        try {
-            const response = await axios.get('http://localhost:5000/api/medicamentos')
-            mudarRemedios(response.data);
-        } catch (err) {
-            // Se o backend não estiver rodando, usar dados de exemplo
-            if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
-                console.log("Backend não está rodando");
-            } else {
-                console.error("Erro ao carregar medicamentos:", err);
-            }
-        }
-    }
-
+    // Carregar medicamentos do backend
     useEffect(() => {
-        const interval = setInterval(() => {
-            listarDados();
-        }, tempoDeAtualizacao);
-        return () => clearInterval(interval);
+        carregarMedicamentos();
     }, []);
 
-    useEffect(() => {
-        listarDados();
-    }, []);
-
-    async function adicionarRemedio(nome_medicamento, data_validade) {    
+    const carregarMedicamentos = async () => {
         try {
-            const id_posto = localStorage.getItem('id_posto');
-            const quantidade = sobrando;
-            await axios.post( 'http://localhost:5000/api/medicamentos/', {id_posto, nome_medicamento, data_validade, falta: false, quantidade});
+            setLoading(true);
+            const response = await axios.get('http://localhost:5000/api/medicamentos');
+            setMedicamentos(response.data);
+        } catch (error) {
+            console.error('Erro ao carregar medicamentos:', error);
+            setMedicamentos([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        } catch (err) {
-            if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
-                console.log("Backend não está rodando, simulando adição de medicamento...");
-                // Simular adição local
-                const novoRemedio = {
-                    id_medicamento: Date.now(),
-                    nome_medicamento,
-                    quantidade: parseInt(sobrando) || 0,
-                    data_validade,
-                    falta: false
-                };
-                mudarRemedios(prev => [...prev, novoRemedio]);
-                alert("Medicamento adicionado (modo simulação)");
+    // Filtrar medicamentos por tipo
+    const medicamentosSobrando = medicamentos.filter(med => !med.falta);
+    const medicamentosFaltando = medicamentos.filter(med => med.falta);
+
+    const handleRegistrarSobra = () => {
+        navigate('/cadastro-sobra');
+    };
+
+    const handleRegistrarFalta = () => {
+        navigate('/cadastro-falta');
+    };
+
+    const handleDoarMedicamento = async (id) => {
+        try {
+            await axios.post(`http://localhost:5000/api/medicamentos/${id}/doar`);
+            alert('Medicamento doado com sucesso!');
+            carregarMedicamentos();
+        } catch (error) {
+            console.error('Erro ao doar medicamento:', error);
+            alert('Erro ao doar medicamento');
+        }
+    };
+
+    const handleSolicitarMedicamento = async (id) => {
+        try {
+            await axios.post(`http://localhost:5000/api/medicamentos/${id}/solicitar`);
+            alert('Solicitação enviada com sucesso!');
+            carregarMedicamentos();
+        } catch (error) {
+            console.error('Erro ao solicitar medicamento:', error);
+            alert('Erro ao solicitar medicamento');
+        }
+    };
+
+    const handleApagarSolicitacao = async (id) => {
+        if (window.confirm('Tem certeza que deseja apagar esta solicitação?')) {
+            try {
+                await axios.delete(`http://localhost:5000/api/medicamentos/${id}`);
+                alert('Solicitação apagada com sucesso!');
+                carregarMedicamentos();
+            } catch (error) {
+                console.error('Erro ao apagar solicitação:', error);
+                alert('Erro ao apagar solicitação');
             }
         }
-    }
+    };
 
-    async function adicionarRemedioFaltando(nome_medicamento, data_validade) {    
-        try {
-            const quantidade = faltando;
-            const id_posto = localStorage.getItem('id_posto');
-            await axios.post( 'http://localhost:5000/api/medicamentos/', {id_posto, nome_medicamento, data_validade, falta: true, quantidade});
+    const handleEditarQuantidade = async (id) => {
+        const novaQuantidade = prompt('Digite a nova quantidade:');
+        if (novaQuantidade && !isNaN(novaQuantidade) && novaQuantidade > 0) {
+            try {
+                // Buscar o medicamento atual para manter os outros campos
+                const medicamentoAtual = medicamentos.find(med => med.id_medicamento == id);
+                if (!medicamentoAtual) {
+                    alert('Medicamento não encontrado');
+                    return;
+                }
 
-        } catch (err) {
-            if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
-                console.log("Backend não está rodando");
+                await axios.put(`http://localhost:5000/api/medicamentos/${id}`, {
+                    nome_medicamento: medicamentoAtual.nome_medicamento,
+                    data_validade: medicamentoAtual.data_validade,
+                    falta: medicamentoAtual.falta,
+                    quantidade: parseInt(novaQuantidade)
+                });
+                alert('Quantidade atualizada com sucesso!');
+                carregarMedicamentos();
+            } catch (error) {
+                console.error('Erro ao editar quantidade:', error);
+                alert('Erro ao editar quantidade: ' + (error.response?.data?.error || error.message));
             }
         }
-    }
+    };
 
-    function handleClick() {
-        if (!nomeRemedioSobra) return alert('Sem nome dado') 
-        adicionarRemedio(nomeRemedioSobra, new Date().toLocaleDateString());
-    }
+    // Filtrar medicamentos por pesquisa
+    const medicamentosFiltradosSobrando = medicamentosSobrando.filter(med => 
+        med.nome_medicamento.toLowerCase().includes(pesquisa.toLowerCase())
+    );
+    const medicamentosFiltradosFaltando = medicamentosFaltando.filter(med => 
+        med.nome_medicamento.toLowerCase().includes(pesquisa.toLowerCase())
+    );
 
-    function handleClickFaltando() {
-        if (!nomeRemedio) return alert('Sem nome dado') 
-        adicionarRemedioFaltando(nomeRemedio, new Date().toLocaleDateString());
+    if (loading) {
+        return (
+            <div style={{ 
+                minHeight: '100vh', 
+                backgroundColor: '#f8f9fa',
+                paddingTop: '80px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
+                <div style={{ textAlign: 'center' }}>
+                    <h2>Carregando medicamentos...</h2>
+                </div>
+            </div>
+        );
     }
-
-    const [nomeRemedioSobra, mudarNomeSobra] = useState('');
-    const [nomeRemedio, mudarNome] = useState('');
-    const [sobrando, mudarSobrando] = useState('');
-    const [faltando, mudarFaltando] = useState('')
-    const [pesquisa, mudarPesquisa] = useState('')
-    
 
     return (
-        <div className="listar-container">
-            <div className="listar-header">
-                <h1 className="listar-title">Gerenciar Medicamentos</h1>
-                
-                <div className="add-medicine-section">
-                    <div className="medicine-form">
-                        <h3 className="form-title">Adicionar Medicamento Sobrando</h3>
-                        <div className="form-group">
-                            <label className="form-label">Nome do Medicamento</label>
-                            <input 
-                                value={nomeRemedioSobra} 
-                                type="text" 
-                                className="form-input"
-                                placeholder="Digite o nome do medicamento" 
-                                onChange={(e) => mudarNomeSobra(e.target.value)} 
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label className="form-label">Quantidade em excesso</label>
-                            <input 
-                                value={sobrando} 
-                                type="number" 
-                                className="form-input"
-                                placeholder="Quantidade disponível" 
-                                onChange={(e) => mudarSobrando(e.target.value)} 
-                            />
-                        </div>
-                        <button onClick={handleClick} className="form-button">
-                            Adicionar Medicamento Sobrando
+        <div style={{ 
+            minHeight: '100vh', 
+            backgroundColor: '#f8f9fa',
+            paddingTop: '80px'
+        }}>
+            <div style={{ 
+                maxWidth: '1400px', 
+                margin: '0 auto', 
+                padding: '20px' 
+            }}>
+                {/* Botões de Ação */}
+                <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    marginBottom: '30px',
+                    flexWrap: 'wrap',
+                    gap: '20px'
+                }}>
+                    <div style={{ display: 'flex', gap: '15px' }}>
+                        <button 
+                            onClick={handleRegistrarSobra}
+                            style={{
+                                backgroundColor: '#007bff',
+                                color: 'white',
+                                border: 'none',
+                                padding: '12px 24px',
+                                borderRadius: '8px',
+                                fontSize: '16px',
+                                fontWeight: 'bold',
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                            }}
+                        >
+                            Registrar Sobra
+                        </button>
+                        <button 
+                            onClick={handleRegistrarFalta}
+                            style={{
+                                backgroundColor: 'white',
+                                color: '#007bff',
+                                border: '2px solid #007bff',
+                                padding: '12px 24px',
+                                borderRadius: '8px',
+                                fontSize: '16px',
+                                fontWeight: 'bold',
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                            }}
+                        >
+                            Registrar Falta
                         </button>
                     </div>
 
-                    <div className="medicine-form">
-                        <h3 className="form-title">Adicionar Medicamento Faltando</h3>
-                        <div className="form-group">
-                            <label className="form-label">Nome do Medicamento</label>
-                            <input 
-                                value={nomeRemedio} 
-                                type="text" 
-                                className="form-input"
-                                placeholder="Digite o nome do medicamento" 
-                                onChange={(e) => mudarNome(e.target.value)} 
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label className="form-label">Quantidade Faltando</label>
-                            <input 
-                                value={faltando} 
-                                type="number" 
-                                className="form-input"
-                                placeholder="Quantidade necessária" 
-                                onChange={(e) => mudarFaltando(e.target.value)} 
-                            />
-                        </div>
-                        <button onClick={handleClickFaltando} className="form-button">
-                            Adicionar Medicamento Faltando
-                        </button>
-                    </div>
-                </div>
-
-                <div className="search-section">
+                    {/* Barra de Pesquisa */}
+                    <div style={{ position: 'relative' }}>
                     <input 
                         type="text" 
-                        className="search-input"
                         placeholder="Pesquisar medicamentos..." 
-                        onChange={(e) => mudarPesquisa(e.target.value)} 
+                            value={pesquisa}
+                            onChange={(e) => setPesquisa(e.target.value)}
+                            style={{
+                                padding: '12px 16px',
+                                border: '2px solid #e9ecef',
+                                borderRadius: '25px',
+                                fontSize: '16px',
+                                width: '300px',
+                                outline: 'none',
+                                transition: 'border-color 0.3s'
+                            }}
                     />
                 </div>
             </div>
 
-            <div className="medicines-grid">
-                <h2 className="section-title">Medicamentos Faltando</h2>
-                {remedio &&
-                remedio.filter(e => e.nome_medicamento.toLowerCase().includes(pesquisa.toLowerCase()) && e.falta == true).map(dados => (
-                    <FaltandoRemedio 
-                        quantidadeFalta={dados.quantidade} 
-                        key={dados.id_medicamento} 
-                        id={dados.id_medicamento} 
-                        nome={dados.nome_medicamento}
-                        atualizar = {listarDados}
-                        id_posto = {dados.id_posto}
-                    />
+                {/* Seção: Medicamentos Sobrando */}
+                <div style={{ marginBottom: '50px' }}>
+                    <h2 style={{ 
+                        color: '#495057', 
+                        marginBottom: '20px',
+                        fontSize: '28px',
+                        fontWeight: 'bold',
+                        textAlign: 'center'
+                    }}>
+                        Medicamentos Sobrando ({medicamentosFiltradosSobrando.length})
+                    </h2>
+                    
+                    {medicamentosFiltradosSobrando.length === 0 ? (
+                        <div style={{
+                            textAlign: 'center',
+                            padding: '40px',
+                            backgroundColor: 'white',
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                        }}>
+                            <p style={{ fontSize: '18px', color: '#6c757d' }}>
+                                Nenhum medicamento em sobra encontrado
+                            </p>
+                        </div>
+                    ) : (
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+                            gap: '20px',
+                            maxWidth: '1200px',
+                            margin: '0 auto'
+                        }}>
+                            {medicamentosFiltradosSobrando.map(med => (
+                                <div key={med.id_medicamento} style={{
+                                    backgroundColor: '#D9E1F6',
+                                    borderRadius: '12px',
+                                    padding: '20px',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                    border: '1px solid #B8C8E8',
+                                    transition: 'transform 0.2s'
+                                }}>
+                                    <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            backgroundColor: '#4caf50',
+                                            borderRadius: '8px',
+                                            margin: '0 auto 10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: 'white',
+                                            fontSize: '14px',
+                                            fontWeight: 'bold'
+                                        }}>
+                                            {med.nome_medicamento.split(' ')[0]}
+                                        </div>
+                                    </div>
+                                    <div style={{ marginBottom: '15px' }}>
+                                        <p style={{ margin: '5px 0', fontSize: '14px', fontWeight: 'bold' }}>
+                                            {med.nome_medicamento}
+                                        </p>
+                                        <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                            <strong>Quantidade:</strong> {med.quantidade}
+                                        </p>
+                                        <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                            <strong>Validade:</strong> {med.data_validade}
+                                        </p>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <button 
+                                            onClick={() => handleEditarQuantidade(med.id_medicamento)}
+                                            style={{
+                                                backgroundColor: '#007bff',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '8px 12px',
+                                                borderRadius: '6px',
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+                                                cursor: 'pointer',
+                                                flex: 1
+                                            }}
+                                        >
+                                            Editar
+                                        </button>
+                                        <button 
+                                            onClick={() => handleApagarSolicitacao(med.id_medicamento)}
+                                            style={{
+                                                backgroundColor: '#dc3545',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '8px 12px',
+                                                borderRadius: '6px',
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+                                                cursor: 'pointer',
+                                                flex: 1
+                                            }}
+                                        >
+                                            Excluir
+                                        </button>
+                                    </div>
+                                </div>
                 ))}
             </div>
+                    )}
+                </div>
 
-            <div className="section-divider"></div>
+                {/* Separador */}
+                <div style={{
+                    height: '2px',
+                    backgroundColor: '#dee2e6',
+                    margin: '40px 0',
+                    borderRadius: '1px'
+                }}></div>
 
-            <div className="medicines-grid">
-                <h2 className="section-title">Medicamentos Sobrando</h2>
-                {remedio &&
-                remedio.filter(e => e.nome_medicamento.toLowerCase().includes(pesquisa.toLowerCase()) && e.falta == false).map(dados => (
-                    <Remedio 
-                        quantidadeSobra={dados.quantidade} 
-                        key={dados.id_medicamento} 
-                        id={dados.id_medicamento} 
-                        nome={dados.nome_medicamento} 
-                        validade={dados.data_validade}
-                        atualizar = {listarDados}
-                        id_posto = {dados.id_posto}
-                    />
-                ))}
+                {/* Seção: Medicamentos Faltando */}
+                <div style={{ marginBottom: '50px' }}>
+                    <h2 style={{ 
+                        color: '#495057', 
+                        marginBottom: '20px',
+                        fontSize: '28px',
+                        fontWeight: 'bold',
+                        textAlign: 'center'
+                    }}>
+                        Medicamentos Faltando ({medicamentosFiltradosFaltando.length})
+                    </h2>
+                    
+                    {medicamentosFiltradosFaltando.length === 0 ? (
+                        <div style={{
+                            textAlign: 'center',
+                            padding: '40px',
+                            backgroundColor: 'white',
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                        }}>
+                            <p style={{ fontSize: '18px', color: '#6c757d' }}>
+                                Nenhum medicamento em falta encontrado
+                            </p>
+                        </div>
+                    ) : (
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+                            gap: '20px',
+                            maxWidth: '1200px',
+                            margin: '0 auto'
+                        }}>
+                            {medicamentosFiltradosFaltando.map(med => (
+                                <div key={med.id_medicamento} style={{
+                                    backgroundColor: '#D9E1F6',
+                                    borderRadius: '12px',
+                                    padding: '20px',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                    border: '1px solid #B8C8E8',
+                                    transition: 'transform 0.2s'
+                                }}>
+                                    <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            backgroundColor: '#dc3545',
+                                            borderRadius: '8px',
+                                            margin: '0 auto 10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: 'white',
+                                            fontSize: '14px',
+                                            fontWeight: 'bold'
+                                        }}>
+                                            {med.nome_medicamento.split(' ')[0]}
+                                        </div>
+                                    </div>
+                                    <div style={{ marginBottom: '15px' }}>
+                                        <p style={{ margin: '5px 0', fontSize: '14px', fontWeight: 'bold' }}>
+                                            {med.nome_medicamento}
+                                        </p>
+                                        <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                            <strong>Quantidade necessária:</strong> {med.quantidade}
+                                        </p>
+                                        <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+                                            <strong>Validade:</strong> {med.data_validade}
+                                        </p>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <button 
+                                            onClick={() => handleEditarQuantidade(med.id_medicamento)}
+                                            style={{
+                                                backgroundColor: '#007bff',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '8px 12px',
+                                                borderRadius: '6px',
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+                                                cursor: 'pointer',
+                                                flex: 1
+                                            }}
+                                        >
+                                            Editar
+                                        </button>
+                                        <button 
+                                            onClick={() => handleApagarSolicitacao(med.id_medicamento)}
+                                            style={{
+                                                backgroundColor: '#dc3545',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '8px 12px',
+                                                borderRadius: '6px',
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+                                                cursor: 'pointer',
+                                                flex: 1
+                                            }}
+                                        >
+                                            Excluir
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
-    )
+    );
 }

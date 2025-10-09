@@ -295,6 +295,27 @@ app.post("/api/medicamentos", async (req, res) => {
   }
 });
 
+// Atualizar medicamento
+app.put("/api/medicamentos/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nome_medicamento, data_validade, falta, quantidade } = req.body;
+    
+    const result = await queryDB(
+      "UPDATE medicamentos SET nome_medicamento = $1, data_validade = $2, falta = $3, quantidade = $4 WHERE id_medicamento = $5 RETURNING *",
+      [nome_medicamento, data_validade, falta, quantidade, id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Medicamento não encontrado" });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ===========================
 // 🔁 ROTA DE TESTE
 // ===========================

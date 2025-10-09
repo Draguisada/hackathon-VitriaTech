@@ -1,4 +1,3 @@
-import ListarItens from './paginas/ListarItens'
 import './styles/App.css'
 import LoginForm from './paginas/Login'
 import Registrar from './paginas/Registrar';
@@ -7,6 +6,9 @@ import Perfil from './paginas/Perfil';
 import LandingPage from './paginas/LandingPage';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import Comunicacao from './paginas/Comunicacao';
+import ListarItens from './paginas/ListarItens';
+import CadastroSobra from './paginas/CadastroSobra';
+import CadastroFalta from './paginas/CadastroFalta';
 
 function App() {
 
@@ -66,7 +68,7 @@ function App() {
               <MostrarNaoSeToken>
                 <li><Link to="/" className="nav-link">Principal</Link></li>
               </MostrarNaoSeToken>
-              <li><Link to="/dashboard" className="nav-link">Visualizar Medicamentos</Link></li>
+              <li><Link to="/dashboard" className="nav-link">Dashboard Medicamentos</Link></li>
               <MostrarSeToken>
                 <li><Link to="/perfil" className="nav-link">Perfil</Link></li>
               </MostrarSeToken>
@@ -105,6 +107,7 @@ function App() {
             element={ <Registrar /> }
           />
         
+
             <Route
               path="/dashboard"
               element={ <PrecisaToken>
@@ -116,6 +119,20 @@ function App() {
               path="/perfil"
               element={ <PrecisaToken>
                           <Perfil/>
+                        </PrecisaToken> }
+            />
+
+            <Route
+              path="/cadastro-sobra"
+              element={ <PrecisaToken>
+                          <CadastroSobra/>
+                        </PrecisaToken> }
+            />
+
+            <Route
+              path="/cadastro-falta"
+              element={ <PrecisaToken>
+                          <CadastroFalta/>
                         </PrecisaToken> }
             />
 
