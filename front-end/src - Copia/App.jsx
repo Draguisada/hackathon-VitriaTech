@@ -3,6 +3,7 @@ import './styles/App.css'
 import LoginForm from './paginas/Login'
 import Registrar from './paginas/Registrar';
 import Perfil from './paginas/Perfil';
+// import Perfil from '../src/paginas/Perfil';
 import LandingPage from './paginas/LandingPage';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 
@@ -56,10 +57,14 @@ function App() {
                 <li><Link to="/" className="nav-link">Principal</Link></li>
               </MostrarNaoSeToken>
               <li><Link to="/dashboard" className="nav-link">Visualizar Medicamentos</Link></li>
+              <MostrarSeToken>
+                <li><Link to="/perfil" className="nav-link">Perfil</Link></li>
+              </MostrarSeToken>
             </ul>
             <MostrarNaoSeToken>
               <Link to="/login" className="login-btn">Login</Link>
             </MostrarNaoSeToken>
+
             <MostrarNaoSeToken>
                 <Link to="/" className="login-btn">Registrar-se</Link>
               </MostrarNaoSeToken>
@@ -91,12 +96,13 @@ function App() {
                           <ListarItens/>
                         </PrecisaToken> }
             />
-          
 
-          <Route
-            path="/perfil"
-            element={ <Perfil /> }
-          />
+            <Route
+              path="/perfil"
+              element={ <PrecisaToken>
+                          <Perfil/>
+                        </PrecisaToken> }
+            />
 
         </Routes>
       </div>

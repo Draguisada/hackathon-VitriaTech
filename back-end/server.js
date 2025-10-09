@@ -4,6 +4,9 @@ const pkg = require("pg");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
+const readline = require("readline");
+const { execSync } = require("child_process");
 
 dotenv.config();
 const { Pool } = pkg;
@@ -12,6 +15,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Configuração inicial do banco (PostgreSQL)
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   database: process.env.DB_NAME || 'vitria_db',
@@ -20,6 +24,7 @@ const pool = new Pool({
   port: process.env.DB_PORT || 5432,
 });
 
+// Função auxiliar para conexões
 async function queryDB(sql, params = []) {
   const client = await pool.connect();
   try {
@@ -36,6 +41,7 @@ async function queryDB(sql, params = []) {
 
 const SECRET_KEY = process.env.JWT_SECRET || "sua_chave_secreta_aqui";
 
+// Gera token JWT
 function generateToken(posto) {
   return jwt.sign(
     {
@@ -48,6 +54,7 @@ function generateToken(posto) {
   );
 }
 
+// Middleware para verificar token
 function tokenRequired(req, res, next) {
   const authHeader = req.headers["authorization"];
   if (!authHeader) return res.status(401).json({ error: "Token não fornecido" });
@@ -68,6 +75,18 @@ function tokenRequired(req, res, next) {
 // ===========================
 // 🧩 ROTAS DE AUTENTICAÇÃO
 // ===========================
+// ===========================
+// 🏥 ROTAS DE POSTOS DE SAÚDE
+// ===========================
+
+app.get("/api/postos_saude/:id", async (req, res) => {
+  try {
+    const result = await queryDB("SELECT * FROM postos_saude WHERE id_posto = $1 ORDER BY id_posto", [req.params.id]);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 app.post("/api/register", async (req, res) => {
   try {
@@ -148,8 +167,6 @@ app.post("/api/login", async (req, res) => {
     const result = await queryDB(
       "SELECT * FROM postos_saude WHERE cnpj_posto = $1 AND ativo = TRUE",
       [cnpj_posto]
-      "SELECT * FROM postos_saude WHERE cnpj_posto = $1 AND ativo = TRUE",
-      [cnpj_posto]
     );
     const posto = result.rows[0];
     if (!posto) return res.status(401).json({ error: "Posto não encontrado" });
@@ -164,6 +181,7 @@ app.post("/api/login", async (req, res) => {
       posto: {
         id_posto: posto.id_posto,
         nome_posto: posto.nome_posto,
+        email_posto: posto.email_posto,
         cnpj_posto: posto.cnpj_posto,
         responsavel_posto: posto.responsavel_posto,
         tipo_usuario: posto.tipo_usuario,
@@ -177,7 +195,7 @@ app.post("/api/login", async (req, res) => {
 app.get("/api/me", tokenRequired, async (req, res) => {
   try {
     const result = await queryDB(
-      "SELECT id_posto, nome_posto, cnpj_posto, endereco_posto, telefone_posto, email_posto, responsavel_posto, tipo_usuario FROM postos_saude WHERE id_posto = $1",
+      "SELECT * FROM postos_saude WHERE id_posto = $1",
       [req.currentPosto.posto_id]
     );
     if (result.rowCount === 0)
@@ -254,7 +272,7 @@ app.post("/api/medicamentos", async (req, res) => {
     const { nome_medicamento, data_validade, falta, quantidade, id_posto } = req.body;
     const result = await queryDB(
       "INSERT INTO medicamentos (nome_medicamento, data_validade, falta, quantidade, id_posto) VALUES ($1,$2,$3,$4,$5) RETURNING *",
-      [nome_medicamento.trim(), data_validade, falta || false, quantidade, id_posto]
+      [nome_medicamento, data_validade, falta, quantidade, id_posto]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -263,7 +281,7 @@ app.post("/api/medicamentos", async (req, res) => {
 });
 
 // ===========================
-// 🔍 ROTA DE TESTE
+// 🔁 ROTA DE TESTE
 // ===========================
 
 app.get("/api/hello", (req, res) => {
