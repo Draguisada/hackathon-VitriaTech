@@ -1,4 +1,5 @@
 import './styles/App.css'
+import Footer from './props/Footer';
 import LoginForm from './paginas/Login'
 import Registrar from './paginas/Registrar';
 import Perfil from './paginas/Perfil';
@@ -138,6 +139,7 @@ function App() {
 
         </Routes>
       </div>
+      <Footer />
     </Router>
   )
 }
