@@ -9,14 +9,22 @@ export default function LandingPage() {
           {/* Hero Section */}
           <section className="hero-section">
             <div className="hero-banner">
-              Banner Principal
+              <img
+                className="hero-image"
+                src="/assets/img/22222.jfif"
+                alt="Banner principal"
+              />
             </div>
           </section>
 
           {/* About Section */}
           <section className="about-section">
             <div className="about-image">
-              🏔️
+              <img
+                className="about-image-img"
+                src="/assets/img/aaaaa.jpg"
+                alt="Imagem ilustrativa"
+              />
             </div>
             <div className="about-content">
               <h2>O que é a Vitria Tech</h2>
